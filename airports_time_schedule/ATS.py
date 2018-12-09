@@ -77,6 +77,8 @@ class Flight:
         return self.__arrival_time
 
     def __eq__(self, other):
+        if not(type(self) is type(other)):
+            raise(ValueError("The type must be instances of Flight"))
         if self.__departure_airport == other.get_departure_airport() and \
                 self.__destination_airport == other.get_destination_airport() and \
                 self.__seats == other.get_seats() and \
