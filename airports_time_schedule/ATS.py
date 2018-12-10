@@ -3,7 +3,7 @@ from datetime import time
 import csv
 from typing import List
 from time import strptime
-
+from TdP_collections.graphs import graph
 # read a time from string
 # temp = strptime(string_time in format HH:MM, "%H:%M")
 # time = time(temp.tm_hour, temp.tm_min)
@@ -17,7 +17,6 @@ class Airport:
             If minutes are too much for a day
             :raise ValueError
         """
-        self.__name = name
         hours, minutes = divmod(minimum_time_coincidence_in_minutes, 60)
         self.__c = time(hours, minutes)
 
@@ -159,10 +158,10 @@ def p(f: Flight) -> int:
     return f.get_seats()
 
 
-list = Airport.read_airports_from_file("./airports.csv")
+list = ATS.read_airports_from_file("./airports.csv")
 print(list)
 print(list[0] == "AAB")
 print(list[0] == list[3])
 
-list = Flight.read_flights_from_file("./flights.csv")
+list = ATS.read_flights_from_file("./flights.csv")
 print(list)
