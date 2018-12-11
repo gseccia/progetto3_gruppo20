@@ -57,25 +57,25 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
 
         u = queue.pop()
 
-        for v in G.vertices():
-
+        for v in G.incident_edges(u):
+            d = v.opposite(u)
             # An edge from u to v exists and destination
             # v is not colored
-            if G.get_edge(u, v) is not None and colorArr[v] == -1:
+            if G.get_edge(u, d) is not None and colorArr[d] == -1:
 
                 # Assign alternate color to this
                 # adjacent v of u
                 color = 1 - colorArr[u]
-                colorArr[v] = color
+                colorArr[d] = color
                 if color == 0:
-                    first.append(v)
+                    first.append(d)
                 elif color == 1:
-                    second.append(v)
-                queue.append(v)
+                    second.append(d)
+                queue.append(d)
 
             # An edge from u to v exists and destination
             # v is colored with same color as u
-            elif G.get_edge(u, v) is not None and colorArr[v] == colorArr[u]:
+            elif G.get_edge(u, d) is not None and colorArr[d] == colorArr[u]:
                 return None
 
     # If we reach here, then all adjacent
