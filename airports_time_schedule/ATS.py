@@ -126,6 +126,7 @@ def p(f: Flight) -> int:
     """
     return f.get_seats()
 
+
 def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[List[Airport], List[Flight]]:
     airports = []
     if path_to_airports is not None:
