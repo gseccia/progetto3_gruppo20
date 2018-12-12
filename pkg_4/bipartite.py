@@ -27,16 +27,18 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     for v in G.vertices():
         colorArr[v] = -1
 
-    src = next(iter(G.vertices()))
-    # Assign first color to source
-    colorArr[src] = 1
-
-    # Create a queue (FIFO) of vertex numbers and
-    # enqueue source vertex for BFS traversal
-    queue = [src]
-
-    X = [src]  # partition with color 0
+    queue = []
+    X = []  # partition with color 0
     Y = []  # partition with color 1
+    for v in G.vertices():
+        src = v
+        # Assign first color to source
+        colorArr[src] = 1
+        # Create a queue (FIFO) of vertex numbers and
+        # enqueue source vertex for BFS traversal
+        queue.append(src)
+        X.append(src)
+        break
 
     # Run while there are vertices in queue
     # (Similar to BFS)
