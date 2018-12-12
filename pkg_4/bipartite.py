@@ -35,8 +35,10 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # Create a queue (FIFO) of vertex numbers and
     # enqueue source vertex for BFS traversal
     queue = [src]
-    first = []  # partition with color 0
-    second = [src]  # partition with color 1
+
+    X = [src]  # partition with color 0
+    Y = []  # partition with color 1
+
     # Run while there are vertices in queue
     # (Similar to BFS)
     while queue:
@@ -53,10 +55,10 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
                 # adjacent v of u
                 color = 1 - colorArr[u]
                 colorArr[d] = color
-                if color == 0:
-                    first.append(d)
-                elif color == 1:
-                    second.append(d)
+                if color == 1:
+                    X.append(d)
+                elif color == 0:
+                    Y.append(d)
                 queue.append(d)
 
             # An edge from u to v exists and destination
@@ -67,30 +69,4 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # If we reach here, then all adjacent
     # vertices can be colored with alternate
     # color
-    return first, second
-
-
-g = Graph()
-v = []
-for i in range(1, 9):
-    v.append(g.insert_vertex(i))
-g.insert_edge(v[0],v[1])
-g.insert_edge(v[0],v[3])
-g.insert_edge(v[2],v[1])
-g.insert_edge(v[2],v[3])
-g.insert_edge(v[2],v[5])
-g.insert_edge(v[4],v[3])
-g.insert_edge(v[4],v[5])
-g.insert_edge(v[4],v[7])
-g.insert_edge(v[6],v[5])
-g.insert_edge(v[6],v[7])
-#g.insert_edge(v[6],v[6])
-
-X,Y = bipartite(g)
-print("X partition")
-for elem in X:
-    print(elem)
-
-print("Y partition")
-for elem in Y:
-    print(elem)
+    return X, Y
