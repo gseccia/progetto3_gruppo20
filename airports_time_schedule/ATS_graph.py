@@ -138,7 +138,7 @@ class ATS(Graph):
                     self.insert_edge(departure, destination, start_time, arrive_time, int(row[4]))
 
 
-def c(a: ATS.Airport) -> time:
+def c(a: ATS.Airport) -> int:
     """
     :parameter a: airport to check
     :return: minimum time to take the coincidence

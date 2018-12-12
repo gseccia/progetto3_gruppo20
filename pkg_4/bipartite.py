@@ -71,3 +71,11 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # vertices can be colored with alternate
     # color
     return X, Y
+
+# Time for for i in range(1000):
+#    for x in s:
+#        break:   0.249871
+# Time for for i in range(1000): next(iter(s)):    0.526266
+# Time for for i in range(1000): s.add(s.pop()):   0.658832
+# Time for for i in range(1000): list(s)[0]:   4.117106
+# Time for for i in range(1000): random.sample(s, 1):  21.851104
