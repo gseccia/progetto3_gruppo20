@@ -61,7 +61,7 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
             d = v.opposite(u)
             # An edge from u to v exists and destination
             # v is not colored
-            if G.get_edge(u, d) is not None and colorArr[d] == -1:
+            if colorArr[d] == -1:
 
                 # Assign alternate color to this
                 # adjacent v of u
@@ -75,7 +75,7 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
 
             # An edge from u to v exists and destination
             # v is colored with same color as u
-            elif G.get_edge(u, d) is not None and colorArr[d] == colorArr[u]:
+            elif colorArr[d] == colorArr[u]:
                 return None
 
     # If we reach here, then all adjacent
