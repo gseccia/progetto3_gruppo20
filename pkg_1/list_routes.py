@@ -1,5 +1,5 @@
 from typing import Optional
-from airports_time_schedule.ATS import *
+from airports_time_schedule.ATS_graph import *
 
 """
     Progettare	una	 funzione	list_routes() che, preso	in	input l’orario	della	compagnia,
@@ -14,5 +14,5 @@ from airports_time_schedule.ATS import *
 """
 
 
-def list_routes(A: list, F: list, a: str, b: str, t: time, T: int) -> Optional[List[List[Flight]]]:
+def list_routes(ts: ATS, a: str, b: str, t: time, T: int) -> Optional[List[List[ATS.Flight]]]:
     pass

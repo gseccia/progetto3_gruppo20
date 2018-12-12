@@ -1,5 +1,5 @@
 from typing import Optional
-from airports_time_schedule.ATS import *
+from airports_time_schedule.ATS_graph import *
 
 
 """
@@ -17,5 +17,5 @@ from airports_time_schedule.ATS import *
 """
 
 
-def select_flights(A: List, F: List, B: int) -> Optional[Tuple[List[Flight], List[Tuple[Airport, int]]]]:
+def select_flights(G: ATS, B: int) -> Optional[Tuple[List[ATS.Flight], List[Tuple[ATS.Airport, int]]]]:
     pass
