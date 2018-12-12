@@ -50,7 +50,7 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # enqueue source vertex for BFS traversal
     queue = [src]
     first = []
-    second = []
+    second = [src]
     # Run while there are vertices in queue
     # (Similar to BFS)
     while queue:
