@@ -4,6 +4,7 @@ import csv
 from typing import List, Tuple
 from time import strptime
 
+
 class Airport:
     __slots__ = ["__c", "__name"]
 
