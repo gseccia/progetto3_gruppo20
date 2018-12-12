@@ -3,25 +3,11 @@ from TdP_collections.graphs.graph import Graph
 
 
 """
-    Date le tre affermazioni (i) G e bipartito; (ii) ` G e 2-colorabile e (iii) ` G non contiene cicli di lunghezza
-    dispari, dimostriamo (i) ⇒ (ii), (ii) ⇒ (iii), (iii) ⇒ (i). Questo dimostra che (i) ⇔ (ii) e (i) ⇔ (iii).
-    
-    1. Se G e bipartito, ` e 2-colorabile. Semplicemente, diamo colore ` 1 a tutti i nodi in una partizione, diamo
-    colore 2 a tutti i nodi nell’altra. Non essendoci archi fra i nodi di una partizione, la colorazione e`
-    valida.
-    
-    2. Se G e 2-colorabile, non contiene cicli di lunghezza dispari. Supponiamo per assurdo che esista un `
-    ciclo (v1, v2),(v2, v3). . . ,(vk−1, vk),(vk, v1), con k dispari. Se il nodo v1 ha colore 1, il nodo v2
-    deve avere colore 2; il nodo v3 deve avere colore 1, e cos`ı via fino al nodo vk, che deve avere colore 1.
-    Poiche` v1 e successore di ` vk, v1 deve avere colore 2, assurdo.
-    
-    3. Se non esistono cicli di lunghezza dispari, il grafo e bipartito. Dimostriamo questa affermazione `
-    costruttivamente. Si prenda un nodo x lo si assegna alla partizione S1. Si prendono poi tutti i nodi
-    adiacenti a nodi in S1 e li si assegna alla partizione S2. Si prendono tutti i nodi adiacenti a nodi in S2
-    e li si assegna alla partizione S1. Questo processo termina quando tutti i nodi appartengono ad una o
-    all’altra partizione. Un nodo puo essere assegnato pi ` u di una volta se e solo se fa parte di un ciclo. Ma `
-    affinche venga assegnato a due colori diversi, deve far parte di un ciclo di lunghezza dispari, e questo ´
-    non e possibile.
+    Scrivere	una	funzione	bipartite() che,	preso	in	input	un	grafo	G	non	diretto,	verifica	
+    se	 G	 è	 bipartito	 e	 restituisce	 una	 partizione	 (X,	 Y)	 dei	 vertici	 di	 G	 tale	 che	 tutti	 gli	
+    archi	del	grafo	collegano	un	vertice	di	X	ad	un	vertice	di	Y. Nel	caso	in	cui	il	grafo	non	
+    sia	 bipartito la	 funzione	 deve	 restituire	 None.	 Analizzare	 la	 complessità	 della	
+    funzione	proposta.
 """
 
 
@@ -49,8 +35,8 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # Create a queue (FIFO) of vertex numbers and
     # enqueue source vertex for BFS traversal
     queue = [src]
-    first = []
-    second = [src]
+    first = []  # partition with color 0
+    second = [src]  # partition with color 1
     # Run while there are vertices in queue
     # (Similar to BFS)
     while queue:
@@ -98,7 +84,7 @@ g.insert_edge(v[4],v[5])
 g.insert_edge(v[4],v[7])
 g.insert_edge(v[6],v[5])
 g.insert_edge(v[6],v[7])
-#g.insert_edge(v[7],v[5])
+#g.insert_edge(v[6],v[6])
 
 X,Y = bipartite(g)
 print("X partition")
