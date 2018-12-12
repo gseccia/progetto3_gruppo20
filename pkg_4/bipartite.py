@@ -27,8 +27,7 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     for v in G.vertices():
         colorArr[v] = -1
 
-    src = list(G.vertices())[0]
-
+    src = next(iter(G.vertices()))
     # Assign first color to source
     colorArr[src] = 1
 
