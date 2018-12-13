@@ -1,6 +1,6 @@
 from __future__ import annotations
 from TdP_collections.graphs.graph import Graph
-from datetime import time
+from datetime import datetime, timedelta
 import csv
 from typing import List, Tuple
 from time import strptime
@@ -14,12 +14,12 @@ class ATS(Graph):
                 :raise ValueError
             """
             hours, minutes = divmod(minimum_time_coincidence_in_minutes, 60)
-            super().__init__((name, time(hours, minutes)))
+            super().__init__((name, timedelta(hours=hours, minutes=minutes)))
 
         def get_name(self) -> str:
             return self.element()[0]
 
-        def get_minimum_time_coincidence(self) -> time:
+        def get_minimum_time_coincidence(self) -> timedelta:
             return self.element()[1]
 
         def __hash__(self):  # will allow vertex to be a map/set key
@@ -37,7 +37,7 @@ class ATS(Graph):
             return self.__str__()
 
     class Flight(Graph.Edge):
-        def __init__(self, departure: ATS.Airport, destination: ATS.Airport, start: time, arrival: time, seats: int):
+        def __init__(self, departure: ATS.Airport, destination: ATS.Airport, start: datetime, arrival: datetime, seats: int):
             super().__init__(departure,destination,(start,arrival,seats))
 
         def get_departure_airport(self) -> ATS.Airport:
@@ -49,10 +49,10 @@ class ATS(Graph):
         def get_seats(self) -> int:
             return self.element()[2]
 
-        def get_start_time(self) -> time:
+        def get_start_time(self) -> datetime:
             return self.element()[0]
 
-        def get_arrival_time(self) -> time:
+        def get_arrival_time(self) -> datetime:
             return self.element()[1]
 
         def opposite(self, v):
@@ -64,6 +64,9 @@ class ATS(Graph):
             elif v is self._destination:
                 return self._origin
             raise ValueError('v not incident to edge')
+
+        def __hash__(self):
+            return hash((self._origin,self._destination,self.element()))
 
         def __str__(self):
             tmp = {"departure": self.get_departure_airport(), "destination": self.get_destination_airport(),
@@ -101,7 +104,8 @@ class ATS(Graph):
         self._outgoing[u][v] = e
         self._incoming[v][u] = e
 
-    def read_time_schedule_from_files(self, path_to_airports: str = None, path_to_flights: str = None):
+    def read_time_schedule_from_files(self, path_to_airports: str = None, path_to_flights: str = None) -> List[Airport]:
+        airports=[]
         if path_to_airports is not None:
             with open(path_to_airports, 'r') as file:
                 reader = csv.reader(file)
@@ -109,7 +113,7 @@ class ATS(Graph):
                     ap = self.Airport(row[0],int(row[1]))
                     if ap in self.vertices():
                         raise ValueError("Airport " + str(ap) + " duplicated in file.")
-                    self.insert_vertex(row[0], int(row[1]))
+                    airports.append(self.insert_vertex(row[0], int(row[1])))
 
         if path_to_flights is not None:
             with open(path_to_flights, 'r') as file:
@@ -130,15 +134,13 @@ class ATS(Graph):
                     if not found_dest:
                         raise ValueError("Destination " + destination.get_name() + " Not found in airports")
 
-                    temp_start = strptime(row[2], "%H:%M")
-                    temp_arrive = strptime(row[3], "%H:%M")
-                    start_time = time(temp_start.tm_hour, temp_start.tm_min)
-                    arrive_time = time(temp_arrive.tm_hour, temp_arrive.tm_min)
+                    start_time = datetime.strptime(row[2], "%H:%M")
+                    arrive_time = datetime.strptime(row[3], "%H:%M")
 
                     self.insert_edge(departure, destination, start_time, arrive_time, int(row[4]))
+        return airports
 
-
-def c(a: ATS.Airport) -> int:
+def c(a: ATS.Airport) -> timedelta:
     """
     :parameter a: airport to check
     :return: minimum time to take the coincidence
@@ -162,7 +164,7 @@ def d(f: ATS.Flight) -> ATS.Airport:
     return f.get_destination_airport()
 
 
-def l(f: ATS.Flight) -> time:
+def l(f: ATS.Flight) -> datetime:
     """
     :param f: flight to check
     :return: departure time
@@ -170,7 +172,7 @@ def l(f: ATS.Flight) -> time:
     return f.get_start_time()
 
 
-def a(f: ATS.Flight) -> time:
+def a(f: ATS.Flight) -> datetime:
     """
     :param f: flight to check
     :return: arrival time
@@ -186,16 +188,16 @@ def p(f: ATS.Flight) -> int:
     return f.get_seats()
 
 
-g = ATS(True)
-g.read_time_schedule_from_files("./airports.csv", "./flights.csv")
-for airport in g.vertices():
-    print(airport)
-    print(c(airport))
-for flight in g.edges():
-    print(flight)
-    print(p(flight))
-    print(a(flight))
-    print(l(flight))
-    print(d(flight))
-    print(s(flight))
-print(str(len(g.vertices()))+"  "+str(len(g.edges())))
+# g = ATS(True)
+# g.read_time_schedule_from_files("./airports.csv", "./flights.csv")
+# for airport in g.vertices():
+#     print(airport)
+#     print(c(airport))
+# for flight in g.edges():
+#     print(flight)
+#     print(p(flight))
+#     print(a(flight))
+#     print(l(flight))
+#     print(d(flight))
+#     print(s(flight))
+# print(str(len(g.vertices()))+"  "+str(len(g.edges())))

@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Optional
 from airports_time_schedule.ATS_graph import *
 from TdP_collections.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
@@ -13,32 +13,60 @@ from TdP_collections.priority_queue.adaptable_heap_priority_queue import Adaptab
 """
 
 
-def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t: time) -> Optional[List[ATS.Flight]]:
+def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) -> Optional[List[ATS.Flight]]:
     dist = {}  # d[v] is upper bound from s to v
     cloud = {}  # map reachable v to its d[v] value
     pq = AdaptableHeapPriorityQueue()  # vertex v will have key d[v]
     pqlocator = {}  # map from vertex to its pq locator
     # for each vertex v of the graph, add an entry to the priority queue, with
     # the source having distance 0 and all others having infinite distance
+
+    t = {start:  t_start + c(start)}
+
     for v in G.vertices():
         if v is start:
-            dist[v] = c(v)
+            dist[v] = c(start)
         else:
-            dist[v] = float('inf')  # syntax for positive infinity
+            dist[v] = timedelta.max  # syntax for positive infinity
         pqlocator[v] = pq.add(dist[v], v)  # save locator for future updates
 
     while not pq.is_empty():
         key, u = pq.remove_min()
         cloud[u] = key  # its correct d[u] value
         del pqlocator[u]  # u is no longer in pq
-        for e in g.incident_edges(u):  # outgoing edges (u,v)
+        print("u ",u," cloud[u] ",cloud[u])
+        if u == end:
+            return dist[u]
+        for e in G.incident_edges(u):  # outgoing edges (u,v)
             v = e.opposite(u)
-            if v not in cloud:
-                # perform relaxation step on edge (u,v)
-                wgt = timedelta(l(e).hour - a(e).hour, l(e).min - a(e).min).total_seconds()/60 + c(v)     # COST FUNCTION UPDATED
-                if dist[u] + wgt < dist[v]:  # better path to v?
-                    dist[v] = dist[u] + wgt  # update the distance
-                    pq.update(pqlocator[v], dist[v], v)  # update the pq entry
-                    if v == end:
-                        break
+            if (l(e) - t[u] - c(u)).total_seconds() >= 0:
+                if v not in cloud:
+                    # perform relaxation step on edge (u,v)
+                    wgt = calc_weight(e, u, t)  # COST FUNCTION
+                    if dist[u] + wgt < dist[v]:  # better path to v?
+                        dist[v] = dist[u] + wgt  # update the distance
+                        pq.update(pqlocator[v], dist[v], v)  # update the pq entry
+                        t[v] = t[u] + wgt
+                        print("v ", v)
+                        print("t[v] ",t[v])
+                        print("dist[v] ",dist[v])
+
+
     return None
+
+
+def calc_weight(e: ATS.Flight, u: ATS.Airport, t: dict) -> timedelta:
+    duration = a(e) - l(e)
+    print("duration ",duration)
+    waiting_for_flight = l(e) - (t[u]+c(u))
+    print("waiting ",waiting_for_flight)
+    return duration + waiting_for_flight + c(u)
+
+
+def sum_times():
+    pass
+
+
+def sum_time_delta(a: datetime, b: datetime) -> datetime:
+    difference = a-b
+    return (a + difference)
