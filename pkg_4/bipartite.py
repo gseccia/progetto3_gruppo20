@@ -1,4 +1,4 @@
-from typing import Tuple, List, Optional
+from typing import Tuple, Dict, List, Optional
 from TdP_collections.graphs.graph import Graph
 
 
@@ -11,9 +11,7 @@ from TdP_collections.graphs.graph import Graph
 """
 
 
-def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]]]:
-    if G.is_directed():
-        raise ValueError("Graph is supposed to be not directed. Directed graph given.")
+def bipartite_connected(G: Graph, src: Graph.Vertex, colorArr: Dict) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]]]:
 
     # Create a color array to store colors
     # assigned to all veritces. Vertex
@@ -23,22 +21,12 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # vertex 'i'. The value 1 is used to indicate
     # first color is assigned and value 0
     # indicates second color is assigned.
-    colorArr = {}
-    for v in G.vertices():
-        colorArr[v] = -1
-
     queue = []
     X = []  # partition with color 0
     Y = []  # partition with color 1
-    for v in G.vertices():
-        src = v
-        # Assign first color to source
-        colorArr[src] = 1
-        # Create a queue (FIFO) of vertex numbers and
-        # enqueue source vertex for BFS traversal
-        queue.append(src)
-        X.append(src)
-        break
+
+    queue.append(src)
+    X.append(src)
 
     # Run while there are vertices in queue
     # (Similar to BFS)
@@ -72,10 +60,29 @@ def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]
     # color
     return X, Y
 
-# Time for for i in range(1000):
-#    for x in s:
-#        break:   0.249871
-# Time for for i in range(1000): next(iter(s)):    0.526266
-# Time for for i in range(1000): s.add(s.pop()):   0.658832
-# Time for for i in range(1000): list(s)[0]:   4.117106
-# Time for for i in range(1000): random.sample(s, 1):  21.851104
+def bipartite(G: Graph) -> Optional[Tuple[List[Graph.Vertex], List[Graph.Vertex]]]:
+  """Perform BFS for entire graph and return forest as a dictionary.
+
+  Result maps each vertex v to the edge that was used to discover it.
+  (vertices that are roots of a BFS tree are mapped to None).
+  """
+  colorArr = {}
+  X=[]
+  Y=[]
+  for v in G.vertices():
+      colorArr[v] = -1
+
+  for u in colorArr:
+        if colorArr[u] == -1:            # u will be a root of a tree
+            colorArr[u] = 1
+            try:
+                X_connected,Y_connected = bipartite_connected(G, u, colorArr)
+            except:
+                return None
+            for elem in X_connected:
+                X.append(elem)
+                colorArr[elem]=1
+            for elem in Y_connected:
+                Y.append(elem)
+                colorArr[elem]=0
+  return X,Y

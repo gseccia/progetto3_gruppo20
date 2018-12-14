@@ -15,7 +15,13 @@ g.insert_edge(v[4],v[5])
 g.insert_edge(v[4],v[7])
 g.insert_edge(v[6],v[5])
 g.insert_edge(v[6],v[7])
-#g.insert_edge(v[6],v[6])
+
+#altra componente bipartibile non connessa alla prima
+v1 = g.insert_vertex(9)
+v2 = g.insert_vertex(10)
+g.insert_edge(v1,v2)
+
+# g.insert_edge(v[6],v[6])
 
 X,Y = bipartite(g)
 print("X partition")
