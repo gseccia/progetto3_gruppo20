@@ -26,12 +26,8 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
     flights_used = {}
     path=[]
 
-    for v in G.vertices():
-        if v is start:
-            dist[v] = c(start)
-        else:
-            dist[v] = timedelta.max  # syntax for positive infinity
-        pqlocator[v] = pq.add(dist[v], v)  # save locator for future updates
+    dist[start] = c(start)
+    pqlocator[start] = pq.add(dist[start], start)  # save locator for future updates
 
     while not pq.is_empty():
         key, u = pq.remove_min()
@@ -50,6 +46,9 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
             return path
         for e in G.incident_edges(u):  # outgoing edges (u,v)
             v = e.opposite(u)
+            if v not in dist:
+                dist[v] = timedelta.max
+                pqlocator[v] = pq.add(dist[v], v)
             if (l(e) - t[u] - c(u)).total_seconds() >= 0:
                 if v not in cloud:
                     # perform relaxation step on edge (u,v)
