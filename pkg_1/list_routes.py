@@ -1,5 +1,5 @@
 from typing import Optional
-from airports_time_schedule.ATS_graph import *
+from airports_time_schedule.ATS import *
 
 """
     Progettare	una	 funzione	list_routes() che, preso	in	input l’orario	della	compagnia,
@@ -13,17 +13,5 @@ from airports_time_schedule.ATS_graph import *
     inferiore a c(a).
     
 """
-def list_routes(ts: ATS, a: str, b: str, t: time, T: int) -> Optional[List[List[ATS.Flight]]]:
-    """
-
-    :param ts: Orario della compagnia
-    :param a: Identificativo aereoporto di partenza
-    :param b: Identificativo aereoporto di arrivo
-    :param t: Orario minimo di partenza
-    :param T: Tempo massimo richiesto della rotta
-    :return: Lista di liste di voli richiesti, oppure None se nessun volo soddisfa le specifiche
-    """
-    pass
-
-def find_one_root(ts: ATS, a: str, b: str, t: time, T: int) -> Optional[List[ATS.Flight]]:
+def list_routes(airports: List[Airport], flights: List[Flight], a: str, b: str, t: datetime, T: int) -> Optional[List[List[Flight]]]:
     pass
