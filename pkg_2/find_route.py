@@ -16,18 +16,22 @@ from TdP_collections.priority_queue.adaptable_heap_priority_queue import Adaptab
 
 
 def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: datetime) -> Optional[Tuple[timedelta,PositionalList]]: ## SPECIFICARE MEGLIO
-    dist = {}  # d[v] is upper bound from s to v
+    dist = {}  # Per ogni aereoporto, memorizzo il tempo per arrivarci
     cloud = {}  # map reachable v to its d[v] value
     pq = AdaptableHeapPriorityQueue()  # vertex v will have key d[v]
     pqlocator = {}  # map from vertex to its pq locator
     # for each vertex v of the graph, add an entry to the priority queue, with
     # the source having distance 0 and all others having infinite distance
 
-    t = {start:  t_start}  # + c(start)}
+    t = {start:  t_start}  # tempo in cui arrivo all'aereoporto x, inizialmente la sorgente
 
+    #Dizionario che consente per ogni aereoporto di memorizzare il volo con cui ci sono arrivato
     flights_used = {}
+
+    #E' il percorso finale dei voli presi per andare da start a end
     path = PositionalList()
 
+    # Per ogni aereoporto, si registra la lista dei voli a cui è collegato
     incident_flights = {}
     for flight in flights:
         if s(flight) not in incident_flights:
@@ -36,7 +40,8 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
             incident_flights[s(flight)].append(flight)
     print(incident_flights)
 
-    dist[start] = timedelta(hours=0, minutes=0)  # c(start)
+    #La distanza oraria per andare alla sorgente è 0
+    dist[start] = timedelta(hours=0, minutes=0)
     pqlocator[start] = pq.add(dist[start], start)  # save locator for future updates
 
     while not pq.is_empty():
@@ -45,8 +50,8 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
         del pqlocator[u]  # u is no longer in pq
         print("u ",u," cloud[u] ",cloud[u])
         if u == end:
-            dep= s(flights_used[u])                     ##modificare con linked list
             path.add_first(flights_used[u])
+            dep= s(flights_used[u])                     ##modificare con linked list
             while dep != start:
                 print("DEP 1 ",dep)
                 path.add_first(flights_used[dep])
@@ -78,5 +83,6 @@ def calc_weight(e: Flight, u: Airport, t: dict) -> timedelta:
     duration = a(e) - l(e)
     print("duration ",duration)
     waiting_for_flight = l(e) - (t[u]+c(u))
+    #Tempo di attesa compreso tra la partenza del volo successivo e il tempo di arrivo incluso il tempo di coincidenza
     print("waiting ",waiting_for_flight)
     return duration + waiting_for_flight + c(u)

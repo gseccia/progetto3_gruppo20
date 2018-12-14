@@ -11,10 +11,19 @@ from airports_time_schedule.ATS_graph import *
     considerare	 che	 non	 è	 possibile	 effettuare	 una	 coincidenza	 se	 tra	 l’orario	 di	
     atterraggio	di	un	volo	ed	il	tempo	di	decollo	del	volo	successivo	intercorre	un	tempo	
     inferiore a c(a).
+    
 """
-
-
 def list_routes(ts: ATS, a: str, b: str, t: time, T: int) -> Optional[List[List[ATS.Flight]]]:
+    """
+
+    :param ts: Orario della compagnia
+    :param a: Identificativo aereoporto di partenza
+    :param b: Identificativo aereoporto di arrivo
+    :param t: Orario minimo di partenza
+    :param T: Tempo massimo richiesto della rotta
+    :return: Lista di liste di voli richiesti, oppure None se nessun volo soddisfa le specifiche
+    """
     pass
 
-
+def find_one_root(ts: ATS, a: str, b: str, t: time, T: int) -> Optional[List[ATS.Flight]]:
+    pass
