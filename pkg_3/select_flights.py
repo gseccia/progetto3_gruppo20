@@ -1,7 +1,6 @@
 from typing import Optional
 from airports_time_schedule.ATS import *
 
-
 """
     Un	 volo	 consuma	 60kg	 di	 gasolio	 per	 ogni	 ora	 di	 volo	 e	 prima	 del	 decollo	 la	
     compagnia	 deve	 acquistare	 dal	 gesture dell’areoporto	 il	 gasolio	 necessario	 per	 il	
@@ -18,20 +17,31 @@ from airports_time_schedule.ATS import *
 
 
 def select_flights(flights: List[Flight], B: int) -> Optional[Tuple[List[Flight], List[Tuple[Airport, int]]]]:
-    nposti = p(flights)
     c = list()
+    nposti = list()
+
     for flight in flights:
-        hours = a(flight)-p(flight)
-        c.append(hours.hour*60)
+        nposti.append(p(flight))
+        hours = a(flight) - l(flight)
+        c.append(int(hours.total_seconds() / 60))
 
-    return max_posti(flights,c,nposti,B)
+    list_of_flights = max_posti(flights, c, nposti, B)
+
+    airport_map = {}
+
+    for i in list_of_flights:
+        dep_airport = i.get_departure_airport()
+        elapsed_time = i.get_arrival_time() - i.get_start_time()
+        if dep_airport not in airport_map:
+            airport_map[dep_airport] = elapsed_time
+        else:
+            airport_map[dep_airport] += elapsed_time
+
+    return list_of_flights, airport_map
 
 
-
-
-
-
-def find_sol(a, c, d, B,C):  # L'ultiimo elemento è stato preso nella sol ottima dove considero tutti gli elementi e lo zaino di capacità B: se si l'ultimo elemento l'ho inserito
+# L'ultiimo elemento è stato preso nella sol ottima dove considero tutti gli elementi e lo zaino di capacità B: se si l'ultimo elemento l'ho inserito
+def find_sol(a, c, d, B, C):
     n = len(a)
     sol = list()
     while n - 1 >= 0:
@@ -47,6 +57,7 @@ def max_posti(a, c, d, P):
     n = len(a)
     M = [[0 for k in range(P + 1)] for i in range(n)]
     C = [[False for k in range(P + 1)] for i in range(n)]
+
     for k in range(P + 1):
         if k > 0 and c[0] <= k:
             M[0][k] = d[0]
@@ -66,4 +77,20 @@ def max_posti(a, c, d, P):
             else:
                 M[i][k] = M[i - 1][k]
     #               C[i][k] = C[i-1]
-    return M[n - 1][P], find_sol(a, c, d, P, C), M, C
+    return find_sol(a, c, d, P, C)
+
+
+def print_select_flight(list, map, budget):
+    print("Con un budget di {} €  è possibile massimizzare i ricavi con i seguenti voli:".format(budget))
+    for i in list:
+        dep = i.get_departure_airport().get_name()
+        dest = i.get_destination_airport().get_name()
+        elapsed_time = i.get_arrival_time() - i.get_start_time()
+        seats = i.get_seats()
+        print("- volo da {} a {} di durata {} minuti che trasporta {} passeggeri".format(dep, dest, int(
+            elapsed_time.total_seconds() / 60), seats))
+
+    print("\nIl budget deve essere così suddiviso:")
+    for i in map:
+        costo = int(map.get(i).total_seconds() / 60)
+        print("- aeroporto {}: {} €".format(i.get_name(), costo))
