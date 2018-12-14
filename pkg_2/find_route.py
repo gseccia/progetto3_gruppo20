@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from airports_time_schedule.ATS_graph import *
+from airports_time_schedule.ATS import *
 from TdP_collections.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
 
 
@@ -13,7 +13,7 @@ from TdP_collections.priority_queue.adaptable_heap_priority_queue import Adaptab
 """
 
 
-def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) -> Optional[List[ATS.Flight]]:
+def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: datetime) -> Optional[Tuple[timedelta,List[Flight]]]:
     dist = {}  # d[v] is upper bound from s to v
     cloud = {}  # map reachable v to its d[v] value
     pq = AdaptableHeapPriorityQueue()  # vertex v will have key d[v]
@@ -24,7 +24,15 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
     t = {start:  t_start + c(start)}
 
     flights_used = {}
-    path=[]
+    path = []
+
+    incident_flights = {}
+    for flight in flights:
+        if s(flight) not in incident_flights:
+            incident_flights[s(flight)] = [flight]
+        else:
+            incident_flights[s(flight)].append(flight)
+    print(incident_flights)
 
     dist[start] = c(start)
     pqlocator[start] = pq.add(dist[start], start)  # save locator for future updates
@@ -35,17 +43,17 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
         del pqlocator[u]  # u is no longer in pq
         print("u ",u," cloud[u] ",cloud[u])
         if u == end:
-            dep= flights_used[u].opposite(u)
+            dep= s(flights_used[u])
             path.append(flights_used[u])
             while dep != start:
                 print("DEP 1 ",dep)
                 path.append(flights_used[dep])
-                dep=flights_used[dep].opposite(dep)
+                dep=s(flights_used[dep])
                 print("DEP 2 ",dep)
             path.reverse()
-            return path
-        for e in G.incident_edges(u):  # outgoing edges (u,v)
-            v = e.opposite(u)
+            return cloud[u],path
+        for e in incident_flights[u]:  # outgoing edges (u,v)
+            v = d(e)
             if v not in dist:
                 dist[v] = timedelta.max
                 pqlocator[v] = pq.add(dist[v], v)
@@ -65,7 +73,7 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
     return None
 
 
-def calc_weight(e: ATS.Flight, u: ATS.Airport, t: dict) -> timedelta:
+def calc_weight(e: Flight, u: Airport, t: dict) -> timedelta:
     duration = a(e) - l(e)
     print("duration ",duration)
     waiting_for_flight = l(e) - (t[u]+c(u))

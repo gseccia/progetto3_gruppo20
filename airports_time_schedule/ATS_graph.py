@@ -98,8 +98,8 @@ class ATS(Graph):
         Raise a ValueError if u and v are not vertices of the graph.
         Raise a ValueError if u and v are already adjacent.
         """
-        if self.get_edge(u, v) is not None:  # includes error checking
-            raise ValueError('u and v are already adjacent')
+        #if self.get_edge(u, v) is not None:  # includes error checking
+        #    raise ValueError('u and v are already adjacent')
         e = self.Flight(u, v, s, a, c)
         self._outgoing[u][v] = e
         self._incoming[v][u] = e

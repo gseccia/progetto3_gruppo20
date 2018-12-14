@@ -1,5 +1,6 @@
 from __future__ import annotations
-from datetime import time
+from TdP_collections.graphs.graph import Graph
+from datetime import datetime, timedelta
 import csv
 from typing import List, Tuple
 from time import strptime
@@ -14,14 +15,17 @@ class Airport:
             :raise ValueError
         """
         hours, minutes = divmod(minimum_time_coincidence_in_minutes, 60)
-        self.__c = time(hours, minutes)
+        self.__c = timedelta(hours=hours, minutes=minutes)
         self.__name = name
 
     def get_name(self) -> str:
         return self.__name
 
-    def get_minimum_time_coincidence(self) -> time:
+    def get_minimum_time_coincidence(self) -> timedelta:
         return self.__c
+
+    def __hash__(self):
+        return hash(id(self.__name))
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -38,7 +42,7 @@ class Airport:
 class Flight:
     __slots__ = ["__departure_airport", "__destination_airport", "__start_time", "__arrival_time", "__seats"]
 
-    def __init__(self, departure: Airport, destination: Airport, start: time, arrival: time, seats: int):
+    def __init__(self, departure: Airport, destination: Airport, start: datetime, arrival: datetime, seats: int):
         self.__departure_airport = departure
         self.__destination_airport = destination
         self.__seats = seats
@@ -55,10 +59,10 @@ class Flight:
     def get_seats(self) -> int:
         return self.__seats
 
-    def get_start_time(self) -> time:
+    def get_start_time(self) -> datetime:
         return self.__start_time
 
-    def get_arrival_time(self) -> time:
+    def get_arrival_time(self) -> datetime:
         return self.__arrival_time
 
     def __eq__(self, other):
@@ -80,7 +84,7 @@ class Flight:
         return self.__str__()
 
 
-def c(a: Airport) -> time:
+def c(a: Airport) -> timedelta:
     """
     :parameter a: airport to check
     :return: minimum time to take the coincidence
@@ -92,6 +96,7 @@ def s(f: Flight) -> Airport:
     """
     :param f: flight to check
     :return: departure airport
+
     """
     return f.get_departure_airport()
 
@@ -104,7 +109,7 @@ def d(f: Flight) -> Airport:
     return f.get_destination_airport()
 
 
-def l(f: Flight) -> time:
+def l(f: Flight) -> datetime:
     """
     :param f: flight to check
     :return: departure time
@@ -112,7 +117,7 @@ def l(f: Flight) -> time:
     return f.get_start_time()
 
 
-def a(f: Flight) -> time:
+def a(f: Flight) -> datetime:
     """
     :param f: flight to check
     :return: arrival time
@@ -128,17 +133,16 @@ def p(f: Flight) -> int:
     return f.get_seats()
 
 
-def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[List[Airport], List[Flight]]:
-    airports = []
+def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[List[Airport],List[Flight]]:
+    airports=[]
     if path_to_airports is not None:
         with open(path_to_airports, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
-                ap = Airport(row[0], int(row[1]))
+                ap = Airport(row[0],int(row[1]))
                 if ap in airports:
-                    raise ValueError("Airport "+str(ap)+" duplicated in file.")
+                    raise ValueError("Airport " + str(ap) + " duplicated in file.")
                 airports.append(ap)
-
     flights = []
     if path_to_flights is not None:
         with open(path_to_flights, 'r') as file:
@@ -151,34 +155,31 @@ def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights:
                     if ap == departure:
                         departure = ap
                         found_dep = True
-                    if ap == departure:
+                    if ap == destination:
                         destination = ap
                         found_dest = True
                 if not found_dep:
-                    raise ValueError("Departure "+departure.get_name()+" Not found in airports")
+                    raise ValueError("Departure " + departure.get_name() + " Not found in airports")
                 if not found_dest:
-                    raise ValueError("Destination "+destination.get_name() + " Not found in airports")
+                    raise ValueError("Destination " + destination.get_name() + " Not found in airports")
 
-                temp_start = strptime(row[2], "%H:%M")
-                temp_arrive = strptime(row[3], "%H:%M")
-                start_time = time(temp_start.tm_hour, temp_start.tm_min)
-                arrive_time = time(temp_arrive.tm_hour, temp_arrive.tm_min)
+                start_time = datetime.strptime(row[2], "%H:%M")
+                arrive_time = datetime.strptime(row[3], "%H:%M")
 
-                flight = Flight(departure, destination, start_time, arrive_time, int(row[4]))
-                if flight not in flights:
-                    flights.append(flight)
-    return airports, flights
+                flights.append(Flight(departure, destination, start_time, arrive_time, int(row[4])))
+    return airports,flights
 
 
-airports, flights = read_time_schedule_from_files("./airports.csv", "./flights.csv")
-for airport in airports:
-    print(airport)
-    print(c(airport))
-for flight in flights:
-    print(flight)
-    print(p(flight))
-    print(a(flight))
-    print(l(flight))
-    print(d(flight))
-    print(s(flight))
-print(str(len(airports))+"  "+str(len(flights)))
+# g = ATS(True)
+# g.read_time_schedule_from_files("./airports.csv", "./flights.csv")
+# for airport in g.vertices():
+#     print(airport)
+#     print(c(airport))
+# for flight in g.edges():
+#     print(flight)
+#     print(p(flight))
+#     print(a(flight))
+#     print(l(flight))
+#     print(d(flight))
+#     print(s(flight))
+# print(str(len(g.vertices()))+"  "+str(len(g.edges())))
