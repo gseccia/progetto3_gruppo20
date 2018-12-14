@@ -1,9 +1,6 @@
-from __future__ import annotations
-from TdP_collections.graphs.graph import Graph
 from datetime import datetime, timedelta
 import csv
 from typing import List, Tuple
-from time import strptime
 
 
 class Airport:
@@ -169,19 +166,4 @@ def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights:
                 arrive_time = datetime.strptime(row[3], "%H:%M")
 
                 flights.append(Flight(departure, destination, start_time, arrive_time, int(row[4])))
-    return airports,flights
-
-
-# g = ATS(True)
-# g.read_time_schedule_from_files("./airports.csv", "./flights.csv")
-# for airport in g.vertices():
-#     print(airport)
-#     print(c(airport))
-# for flight in g.edges():
-#     print(flight)
-#     print(p(flight))
-#     print(a(flight))
-#     print(l(flight))
-#     print(d(flight))
-#     print(s(flight))
-# print(str(len(g.vertices()))+"  "+str(len(g.edges())))
+    return airports, flights
