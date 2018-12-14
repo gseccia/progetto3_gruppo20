@@ -1,5 +1,5 @@
 from typing import Optional
-from airports_time_schedule.ATS_graph import *
+from airports_time_schedule.ATS import *
 
 
 """
@@ -17,5 +17,53 @@ from airports_time_schedule.ATS_graph import *
 """
 
 
-def select_flights(G: ATS, B: int) -> Optional[Tuple[List[ATS.Flight], List[Tuple[ATS.Airport, int]]]]:
-    pass
+def select_flights(flights: List[Flight], B: int) -> Optional[Tuple[List[Flight], List[Tuple[Airport, int]]]]:
+    nposti = p(flights)
+    c = list()
+    for flight in flights:
+        hours = a(flight)-p(flight)
+        c.append(hours.hour*60)
+
+    return max_posti(flights,c,nposti,B)
+
+
+
+
+
+
+def find_sol(a, c, d, B,C):  # L'ultiimo elemento è stato preso nella sol ottima dove considero tutti gli elementi e lo zaino di capacità B: se si l'ultimo elemento l'ho inserito
+    n = len(a)
+    sol = list()
+    while n - 1 >= 0:
+        if C[n - 1][B] == True:
+            sol.append(a[n - 1])
+            B = B - c[n - 1]
+        n -= 1
+    return sol
+
+
+def max_posti(a, c, d, P):
+    solution = dict()
+    n = len(a)
+    M = [[0 for k in range(P + 1)] for i in range(n)]
+    C = [[False for k in range(P + 1)] for i in range(n)]
+    for k in range(P + 1):
+        if k > 0 and c[0] <= k:
+            M[0][k] = d[0]
+            C[0][k] = True
+
+    for i in range(1, n):
+        for k in range(1, P + 1):
+            # Nella k-esima colonna (quando cioè P=k) se la difficoltà che ci sarebbe se l'i-esimo
+            # elemento non ci fosse sarebbe minore rispetto a se invece l'avessi inserito,
+            # cioè minore della difficoltà totale che è uguale alla somma della sua difficoltà e quella
+            # che c'era prima di lui quindi nella colonna k-c[i] e nella riga superiore, inseriscilo e metti cioè la seconda difficoltà
+            # l'ultimo elemento lo inserisco anche se la somma dei crediti di entrambi non "appara" a P
+            if c[i] <= k and (M[i - 1][k - c[i]] + d[i] >= M[i - 1][k]):  # and c[i] + C[i-1][k-c[i]]<P):
+                M[i][k] = M[i - 1][k - c[i]] + d[i]
+                C[i][k] = True  # Se abbiamo preso l'ultimo elemento
+            #               C[i][k] =C[i-1][k-c[i]] + c[i]
+            else:
+                M[i][k] = M[i - 1][k]
+    #               C[i][k] = C[i-1]
+    return M[n - 1][P], find_sol(a, c, d, P, C), M, C
