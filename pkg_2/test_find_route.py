@@ -19,5 +19,7 @@ end=airports[5]
 print("start ",start)
 print("end ",end)
 tmp = find_route(flights,start,end,datetime.strptime("09:00","%H:%M"))
-print("distance {0} path {1}".format(tmp[0],tmp[1]))
+print("distance {0}".format(tmp[0]))
+for elem in tmp[1]:
+    print(elem)
 

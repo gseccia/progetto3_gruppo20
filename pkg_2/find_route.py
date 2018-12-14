@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Type
+
+from TdP_collections.list.positional_list import PositionalList
 from airports_time_schedule.ATS import *
 from TdP_collections.priority_queue.adaptable_heap_priority_queue import AdaptableHeapPriorityQueue
 
@@ -13,7 +15,7 @@ from TdP_collections.priority_queue.adaptable_heap_priority_queue import Adaptab
 """
 
 
-def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: datetime) -> Optional[Tuple[timedelta,List[Flight]]]:
+def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: datetime) -> Optional[Tuple[timedelta,PositionalList]]: ## SPECIFICARE MEGLIO
     dist = {}  # d[v] is upper bound from s to v
     cloud = {}  # map reachable v to its d[v] value
     pq = AdaptableHeapPriorityQueue()  # vertex v will have key d[v]
@@ -21,10 +23,10 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
     # for each vertex v of the graph, add an entry to the priority queue, with
     # the source having distance 0 and all others having infinite distance
 
-    t = {start:  t_start + c(start)}
+    t = {start:  t_start}  # + c(start)}
 
     flights_used = {}
-    path = []
+    path = PositionalList()
 
     incident_flights = {}
     for flight in flights:
@@ -34,7 +36,7 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
             incident_flights[s(flight)].append(flight)
     print(incident_flights)
 
-    dist[start] = c(start)
+    dist[start] = timedelta(hours=0, minutes=0)  # c(start)
     pqlocator[start] = pq.add(dist[start], start)  # save locator for future updates
 
     while not pq.is_empty():
@@ -43,21 +45,20 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
         del pqlocator[u]  # u is no longer in pq
         print("u ",u," cloud[u] ",cloud[u])
         if u == end:
-            dep= s(flights_used[u])
-            path.append(flights_used[u])
+            dep= s(flights_used[u])                     ##modificare con linked list
+            path.add_first(flights_used[u])
             while dep != start:
                 print("DEP 1 ",dep)
-                path.append(flights_used[dep])
+                path.add_first(flights_used[dep])
                 dep=s(flights_used[dep])
                 print("DEP 2 ",dep)
-            path.reverse()
             return cloud[u],path
         for e in incident_flights[u]:  # outgoing edges (u,v)
             v = d(e)
             if v not in dist:
                 dist[v] = timedelta.max
                 pqlocator[v] = pq.add(dist[v], v)
-            if (l(e) - t[u] - c(u)).total_seconds() >= 0:
+            if l(e) - t[u] >= c(u) or (u == start and l(e) >= t[u]):   # PRIMO CASO
                 if v not in cloud:
                     # perform relaxation step on edge (u,v)
                     wgt = calc_weight(e, u, t)  # COST FUNCTION
