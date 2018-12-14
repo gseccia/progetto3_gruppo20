@@ -23,6 +23,9 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
 
     t = {start:  t_start + c(start)}
 
+    flights_used = {}
+    path=[]
+
     for v in G.vertices():
         if v is start:
             dist[v] = c(start)
@@ -36,7 +39,15 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
         del pqlocator[u]  # u is no longer in pq
         print("u ",u," cloud[u] ",cloud[u])
         if u == end:
-            return dist[u]
+            dep= flights_used[u].opposite(u)
+            path.append(flights_used[u])
+            while dep != start:
+                print("DEP 1 ",dep)
+                path.append(flights_used[dep])
+                dep=flights_used[dep].opposite(dep)
+                print("DEP 2 ",dep)
+            path.reverse()
+            return path
         for e in G.incident_edges(u):  # outgoing edges (u,v)
             v = e.opposite(u)
             if (l(e) - t[u] - c(u)).total_seconds() >= 0:
@@ -50,7 +61,7 @@ def find_route(G: ATS, start: ATS.Airport, end: ATS.Airport, t_start: datetime) 
                         print("v ", v)
                         print("t[v] ",t[v])
                         print("dist[v] ",dist[v])
-
+                        flights_used[v] = e
 
     return None
 
@@ -61,12 +72,3 @@ def calc_weight(e: ATS.Flight, u: ATS.Airport, t: dict) -> timedelta:
     waiting_for_flight = l(e) - (t[u]+c(u))
     print("waiting ",waiting_for_flight)
     return duration + waiting_for_flight + c(u)
-
-
-def sum_times():
-    pass
-
-
-def sum_time_delta(a: datetime, b: datetime) -> datetime:
-    difference = a-b
-    return (a + difference)
