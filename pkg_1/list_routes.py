@@ -15,7 +15,7 @@ from airports_time_schedule.ATS import *
 """
 
 
-def list_routes_(airports: List[Airport], flights: List[Flight], start: Airport, end: Airport, t_start: datetime, T: timedelta) ->Optional[List[List[Flight]]]:
+def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, end: Airport, t_start: datetime, T: timedelta) ->Optional[List[List[Flight]]]:
     # Table to be filled up using DP.
     # The value count[i][j][e] will / store
     # count of possible walks from i to
@@ -27,11 +27,11 @@ def list_routes_(airports: List[Airport], flights: List[Flight], start: Airport,
             paths[src][dest] = dict()
 
     min_flight_duration = timedelta.max
+
+
     for flight in flights:
         if l(flight) >= t_start and a(flight)-l(flight) <= T:
-            paths[s(flight)][d(flight)][a(flight) - l(flight)][0] = 1
-            paths[s(flight)][d(flight)][a(flight) - l(flight)][1] = [flight]
-            paths[s(flight)][d(flight)][a(flight) - l(flight)][2] = [a(flight) - l(flight)]
+            paths[s(flight)][d(flight)][a(flight) - l(flight)] = [1, [[flight]], a(flight) - l(flight)]
             if a(flight) - l(flight) < min_flight_duration:
                 min_flight_duration = a(flight) - l(flight) # volo più breve corrisponde al path più breve
 
@@ -42,33 +42,53 @@ def list_routes_(airports: List[Airport], flights: List[Flight], start: Airport,
         path_added = False
         for flight in flights:
             for src in paths:
-                num_existing_paths = paths[src][s(flight)][time_counting][0]
-                if num_existing_paths != 0:
-                    path = paths[src][s(flight)][time_counting][1][num_existing_paths-1]
-                    path_duration = paths[src][s(flight)][time_counting][2][num_existing_paths-1]
-                    flight_cost = calc_weight(flight, s(flight), t_start+path_duration)
-                    path_relative_duration = path_duration+flight_cost
-                    if path_relative_duration <= T:
-                        new_path_discovered = path.append(flight)
-                        path_added = True
-                        if path_relative_duration in paths[src][d(flight)]:
-                            paths[src][d(flight)][path_relative_duration][0] += 1
-                            paths[src][d(flight)][path_relative_duration][1].append(new_path_discovered)
-                            paths[src][d(flight)][path_relative_duration][2].append(path_relative_duration)
-                        else:
-                            paths[src][d(flight)][path_relative_duration][0] = 1
-                            paths[src][d(flight)][path_relative_duration][1] = [new_path_discovered]
-                            paths[src][d(flight)][path_relative_duration][2] = [path_relative_duration]
+                for possible_duration_time in paths[src][s(flight)]:
+                    print("partenza volo ", l(flight))
+                    print("durata del path ",possible_duration_time)
+                    print("costo di check-in", c(s(flight)))
+                    print("posso prenderlo? ", l(flight) >= t_start + possible_duration_time+c(s(flight)))
+                    if l(flight) >= t_start + possible_duration_time+c(s(flight)):
+                        path_duration = possible_duration_time
+                        print("Quanto costa il volo? ")
+                        flight_cost = calc_weight(flight, s(flight), t_start + path_duration)
+                        print(flight_cost)
+                        print("Posso ancora prenderlo rispetto alla durata di ",T)
+                        path_relative_duration = path_duration + flight_cost
+                        print("durata totale ", path_relative_duration," quindi ",path_relative_duration <= T)
+                        if path_relative_duration <= T:
+                            for path in paths[src][s(flight)][possible_duration_time][1]:
+                                    new_path_discovered = path + [flight]
 
-                    if path_relative_duration < min_path_relative_duration:
-                        min_path_relative_duration = path_relative_duration
-        time_counting = time_counting+min_path_relative_duration
+                                    print("Ho già considerato questo path? ")
+                                    if path_relative_duration in paths[src][d(flight)] and new_path_discovered in paths[src][d(flight)][path_relative_duration][1]:
+                                        print("SI")
+                                    elif path_relative_duration in paths[src][d(flight)]:
+                                        print("ADDING PATHS")
+                                        path_added = True
+                                        paths[src][d(flight)][path_relative_duration][1].append(new_path_discovered)
+                                    else:
+                                        print("ADDING PATHS")
+                                        path_added = True
+                                        paths[src][d(flight)][path_relative_duration] = [1, [new_path_discovered], path_relative_duration]
+                            print("path relative duration ",path_relative_duration)
+                            if path_relative_duration < min_path_relative_duration:
+                                print("UPDATE MIN")
+                                min_path_relative_duration = path_relative_duration
+        time_counting = min_path_relative_duration
 
         #print possible paths
-        for time_valid in paths[start][end]:
-            for path_series in paths[start][end][time_valid][1]:
-                for path in path_series:
-                    print(path)
+
+    print("PATHS NUMBER IS  ",len(paths[start][end]))
+    i = 1
+    for time_valid in paths[start][end]:
+        print(" PATH for time equal to ", time_valid)
+        print("")
+        print("PATH ", i)
+        for flight_path in paths[start][end][time_valid][1]:
+            print(flight_path)
+        print("")
+        i = i+1
+        print("")
 
 
 def calc_weight(e: Flight, u: Airport, t: datetime) -> timedelta:
