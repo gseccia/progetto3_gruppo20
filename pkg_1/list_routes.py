@@ -31,7 +31,7 @@ def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, 
 
     for flight in flights:
         if l(flight) >= t_start and a(flight)-l(flight) <= T:
-            paths[s(flight)][d(flight)][a(flight) - l(flight)] = [1, [[flight]], a(flight) - l(flight)]
+            paths[s(flight)][d(flight)][a(flight) - l(flight)] = [1, [[flight]]]
             if a(flight) - l(flight) < min_flight_duration:
                 min_flight_duration = a(flight) - l(flight) # volo più breve corrisponde al path più breve
 
@@ -69,7 +69,7 @@ def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, 
                                     else:
                                         print("ADDING PATHS")
                                         path_added = True
-                                        paths[src][d(flight)][path_relative_duration] = [1, [new_path_discovered], path_relative_duration]
+                                        paths[src][d(flight)][path_relative_duration] = [1, [new_path_discovered]]
                             print("path relative duration ",path_relative_duration)
                             if path_relative_duration < min_path_relative_duration:
                                 print("UPDATE MIN")
