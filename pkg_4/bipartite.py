@@ -32,7 +32,7 @@ def bipartite_connected(g: Graph, s: Graph.Vertex, discovered: Set[Graph.Vertex]
     q = [s]          # creo una coda con i vertici da considerare
     x = [s]          # creo la sotto-partizione 1 con assegnato il primo vertice
     y = []           # creo la sotto- partizione 2
-    while q:
+    while q:   #  finché la coda non è vuota
         current = q.pop()  # prendo il vertice da elaborare
         next_colour = 1 - colour[current]  # i vertici opposti avranno colore opposto al vertice corrente
         for dest in g.incident_edges(current):  # considero tutti gli archi uscenti

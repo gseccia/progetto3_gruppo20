@@ -38,10 +38,10 @@ def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, 
     time_counting = min_flight_duration
     path_added = True
     while time_counting <= T and path_added:
-        min_path_relative_duration = T
+        min_path_relative_duration = timedelta.max
         path_added = False
-        for flight in flights:
-            for src in paths:
+        for flight in flights:         # m
+            for src in paths:          # n
                 for possible_duration_time in paths[src][s(flight)]:
                     print("partenza volo ", l(flight))
                     print("durata del path ",possible_duration_time)
