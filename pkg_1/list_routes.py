@@ -21,56 +21,42 @@ def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, 
     # count of possible walks from i to
     # j in e minutes, the possible walks in a list of list of flights, for each walk the time remaining
     paths = dict()
-    for src in airports:
+    for src in airports:    # n*n
         paths[src]=dict()
         for dest in airports:
             paths[src][dest] = dict()
 
-    for flight in flights:
+    for flight in flights:   # m
         if l(flight) >= t_start and a(flight)-l(flight) <= T:
             paths[s(flight)][d(flight)][a(flight) - l(flight)] = [[flight]]
-
+    i=0
     path_added = True
-    while path_added:
+    while path_added:  # T/flight_min *
         path_added = False
-        for flight in flights:         # m
-            for src in paths:          # n
-                for possible_duration_time in paths[src][s(flight)]:
-                    print("partenza volo ", l(flight))
-                    print("durata del path ",possible_duration_time)
-                    print("costo di check-in", c(s(flight)))
-                    print("posso prenderlo? ", l(flight) >= t_start + possible_duration_time+c(s(flight)))
+        for flight in flights:   # m *
+            for src in paths:      # n *
+                for possible_duration_time in paths[src][s(flight)]:  # T/flight_min *
                     if l(flight) >= t_start + possible_duration_time+c(s(flight)):
-                        path_duration = possible_duration_time
-                        print("Quanto costa il volo? ")
-                        flight_cost = calc_weight(flight, s(flight), t_start + path_duration)
-                        print(flight_cost)
-                        print("Posso ancora prenderlo rispetto alla durata di ",T)
-                        path_relative_duration = path_duration + flight_cost
-                        print("durata totale ", path_relative_duration," quindi ",path_relative_duration <= T)
+                        flight_cost = calc_weight(flight, s(flight), t_start + possible_duration_time)
+                        path_relative_duration = possible_duration_time + flight_cost
                         if path_relative_duration <= T:
-                            for path in paths[src][s(flight)][possible_duration_time]:
+                            for path in paths[src][s(flight)][possible_duration_time]:  # boh *
+                                    i+=1
                                     new_path_discovered = path + [flight]
-
-                                    print("Ho già considerato questo path? ")
-
-                                    if path_relative_duration not in paths[src][d(flight)]:
-                                        print("ADDING PATHS")
+                                    if path_relative_duration not in paths[src][d(flight)]:  # T/t_flight_min
                                         path_added = True
                                         paths[src][d(flight)][path_relative_duration] = [new_path_discovered]
-                                    elif new_path_discovered not in paths[src][d(flight)][path_relative_duration]:
-                                        print("ADDING PATHS")
+                                    elif new_path_discovered not in paths[src][d(flight)][path_relative_duration]: # boh
                                         path_added = True
                                         paths[src][d(flight)][path_relative_duration].append(new_path_discovered)
 
-                            print("path relative duration ",path_relative_duration)
-
-        #print possible paths
+    #print possible paths
+    print("path visited ",i)
     routes = []
     for time_valid in paths[start][end]:
         for flight_path in paths[start][end][time_valid]:
             routes.append(flight_path)
-    return routes
+    return None if len(routes) is 0 else routes
 
 
 def calc_weight(e: Flight, u: Airport, t: datetime) -> timedelta:
