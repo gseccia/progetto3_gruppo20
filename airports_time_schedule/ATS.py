@@ -56,8 +56,8 @@ class Flight:
     def get_seats(self) -> int:
         return self.__seats
 
-    def get_elapsed_time(self) -> int:
-        return int((self.__arrival_time - self.__start_time).total_seconds()/60)
+    # def get_elapsed_time(self) -> int:
+    #     return int((self.__arrival_time - self.__start_time).total_seconds()/60)
 
     def get_start_time(self) -> datetime:
         return self.__start_time
@@ -86,7 +86,9 @@ class Flight:
         return self.__str__()
 
     def __gt__(self, other):
-        return self.get_elapsed_time() > other.get_elapsed_time()
+        et = self.get_arrival_time() - self.get_start_time()
+        et_other = other.get_arrival_time() - other.get_start_time()
+        return et > et_other
 
 
 def c(a: Airport) -> timedelta:
