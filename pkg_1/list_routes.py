@@ -78,7 +78,7 @@ def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, 
 
         #print possible paths
 
-    print("PATHS NUMBER IS  ",len(paths[start][end]))
+    print("PATHS DURATION NUMBER IS  ",len(paths[start][end]))
     i = 1
     for time_valid in paths[start][end]:
         print(" PATH for time equal to ", time_valid)
