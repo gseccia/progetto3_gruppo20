@@ -18,4 +18,6 @@ start=airports[0]
 end=airports[5]
 print("start ",start)
 print("end ",end)
-list_routes(airports,flights,start,end,datetime.strptime("09:00","%H:%M"), timedelta(hours=17,minutes=0))
+r = list_routes(airports,flights,start,end,datetime.strptime("09:00","%H:%M"), timedelta(hours=17,minutes=0))
+for elem in r:
+    print(elem)
