@@ -5,15 +5,15 @@ from airports_time_schedule.ATS import Airport, Flight
 
 
 def get_random_pair_airports():
-    airports = ["BER", "TXL", "SXF", "BER", "BUH", "OTP", "BBU"]
+    airports = ["BER","SUCA"]#["BER", "TXL", "SXF", "BER", "BUH", "OTP", "BBU"]
 
         # ["BER", "TXL", "SXF", "BER", "BUH", "OTP", "BBU", "BUE", "EZE", "AEP", "CHI", "ORD", "MDW", "JKT", "CGK",
         #         "LON", "LHR", "LGW", "LCY", "STN", "LTN", "SEN", "MIL", "MXP", "MIA", "MIA", "MOW", "NYC", "JFK", "CDG",
         #         "FCO", "CIA", "SAO", "STO", "TYO", "WAS"]
-    tmp = random.sample(range(len(airports) - 1), 2)
+    tmp = random.sample(range(len(airports)), 2)
     list = []
-    list.append(Airport(airports[tmp[0]], random.randint(0, 100)))
-    list.append(Airport(airports[tmp[1]], random.randint(0, 100)))
+    list.append(Airport(airports[tmp[0]], 10))
+    list.append(Airport(airports[tmp[1]], 10))
     return list
 
 
