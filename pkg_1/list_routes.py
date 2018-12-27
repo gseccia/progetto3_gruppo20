@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from airports_time_schedule.ATS import *
 
 """
@@ -14,7 +14,7 @@ from airports_time_schedule.ATS import *
     
 """
 
-
+"""
 def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, end: Airport, t_start: datetime, T: timedelta) ->Optional[List[List[Flight]]]:
     # Table to be filled up using DP.
     # The value count[i][j][e] will / store
@@ -57,6 +57,39 @@ def list_routes(airports: List[Airport], flights: List[Flight], start: Airport, 
         for flight_path in paths[start][end][time_valid]:
             routes.append(flight_path)
     return None if len(routes) is 0 else routes
+"""
+
+
+def list_routes(flights: List[Flight], start: Airport, b: Airport, t, T: timedelta):
+    current_path = [timedelta(0, 0), []]
+    paths = []
+
+    # Construction
+    available_flight = dict()
+    for flight in flights:
+        if l(flight) >= t and a(flight)-l(flight) <= T:
+            if s(flight) in available_flight:
+                available_flight[s(flight)].append(flight)
+            else:
+                available_flight[s(flight)] = [flight]
+
+    list_routes_rec(available_flight, start, b, t, T, current_path, paths)
+    return paths
+
+
+def list_routes_rec(flights: Dict, start: Airport, b: Airport, arrival_time: datetime, T: timedelta, current_path: List, paths: List):
+    if start == b:
+        paths.append(current_path[1].copy())
+    else:
+        for flight in flights[start]:
+            actual_cost = calc_weight(flight, s(flight), arrival_time)
+            cost = current_path[0] + actual_cost
+            if cost < T and arrival_time+c(start) <= l(flight):
+                current_path[0] += actual_cost
+                current_path[1].append(flight)
+                list_routes_rec(flights, d(flight), b, a(flight), T, current_path, paths)
+                current_path[1].remove(flight)
+                current_path[0] -= actual_cost
 
 
 def calc_weight(e: Flight, u: Airport, t: datetime) -> timedelta:
