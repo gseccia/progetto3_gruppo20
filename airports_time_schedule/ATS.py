@@ -30,7 +30,7 @@ class Airport:
         return False
 
     def __str__(self):
-        return "[name: "+self.__name+", time_needed: "+str(self.__c)+"]"
+        return "[name: " + self.__name + ", time_needed: " + str(self.__c) + "]"
 
     def __repr__(self):
         return self.__str__()
@@ -56,8 +56,8 @@ class Flight:
     def get_seats(self) -> int:
         return self.__seats
 
-    # def get_elapsed_time(self) -> int:
-    #     return int((self.__arrival_time - self.__start_time).total_seconds()/60)
+    def get_elapsed_time(self) -> int:
+        return int((self.__arrival_time - self.__start_time).total_seconds() / 60)
 
     def get_start_time(self) -> datetime:
         return self.__start_time
@@ -66,8 +66,8 @@ class Flight:
         return self.__arrival_time
 
     def __eq__(self, other):
-        if not(type(self) is type(other)):
-            raise(ValueError("The type must be instances of Flight"))
+        if not (type(self) is type(other)):
+            raise (ValueError("The type must be instances of Flight"))
         if self.__departure_airport == other.get_departure_airport() and \
                 self.__destination_airport == other.get_destination_airport() and \
                 self.__seats == other.get_seats() and \
@@ -89,6 +89,10 @@ class Flight:
         et = self.get_arrival_time() - self.get_start_time()
         et_other = other.get_arrival_time() - other.get_start_time()
         return et > et_other
+
+    def __hash__(self):
+        return hash(
+            str(self.__departure_airport) + str(self.__destination_airport) + str(self.__seats) + str(self.__start_time) + str(self.__arrival_time))
 
 
 def c(a: Airport) -> timedelta:
@@ -140,13 +144,14 @@ def p(f: Flight) -> int:
     return f.get_seats()
 
 
-def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[List[Airport],List[Flight]]:
-    airports=[]
+def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[
+    List[Airport], List[Flight]]:
+    airports = []
     if path_to_airports is not None:
         with open(path_to_airports, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
-                ap = Airport(row[0],int(row[1]))
+                ap = Airport(row[0], int(row[1]))
                 if ap in airports:
                     raise ValueError("Airport " + str(ap) + " duplicated in file.")
                 airports.append(ap)

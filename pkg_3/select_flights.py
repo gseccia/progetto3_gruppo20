@@ -98,5 +98,5 @@ def print_select_flight(list, map, budget):
         totale += costo
         print("- aeroporto {}: {} €".format(i.get_name(), costo))
 
-    print("\nPosti totali: {}".format(tot_seats))
-    print("Costo totale: {} €".format(totale))
+    print("\nCosto totale: {} €".format(totale))
+    print("Posti totali: {}".format(tot_seats))
