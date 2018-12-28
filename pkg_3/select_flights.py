@@ -27,9 +27,9 @@ def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Fl
     num_posti = list()
 
     # Ordinamento richiede O(nlogn)
-    #L'ordinamento dei voli rende possibile, oltre a minimizzare il numero dei posti, anche a ridurre il budget totale da spendere
-
-    flights.sort(reverse=True)
+    # L'ordinamento dei voli rende possibile, oltre a minimizzare il numero dei posti, anche a ridurre il budget totale da spendere
+    flights = sorted(flights, reverse=True, key=lambda flight: (l(flight)-a(flight)))
+    # flights.sort(reverse=True)
 
     # Inserimento nelle due code O(n)
     for flight in flights:
