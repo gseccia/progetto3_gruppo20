@@ -16,7 +16,7 @@ from airports_time_schedule.ATS import *
 """
 
 
-def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Flight], List[Tuple[Airport, int]]]]:
+def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Flight], Dict]]:
     """
 
     :param flights: lista dei voli
@@ -114,31 +114,3 @@ def max_posti(flights, flights_cost, num_posti, budget):
     return find_sol(flights, flights_cost, budget, C)
 
 
-def print_select_flight(flights, airports, budget):
-    """
-    Metodo di stampa dei voli selezionati
-    :param flights: vettore dei voli
-    :param airports: vettore degli aereoporti
-    :param budget: budget massimo
-    :return:
-    """
-    totale = 0
-    tot_seats = 0
-    print("With a budget of {} €, you can maximize revenue with the following flights:".format(budget))
-    for flight in flights:
-        dep = flight.get_departure_airport().get_name()
-        dest = flight.get_destination_airport().get_name()
-        elapsed_time = flight.get_arrival_time() - flight.get_start_time()
-        seats = flight.get_seats()
-        tot_seats += seats
-        print("- flight from {} to {} - flight duration {} min - passenger {}".format(dep, dest, int(
-            elapsed_time.total_seconds() / 60), seats))
-
-    print("\nBudget must be divided as follows:")
-    for airport in airports:
-        costo = int(airports.get(airport).total_seconds() / 60)
-        totale += costo
-        print("- airport {}: {} €".format(airport.get_name(), costo))
-
-    print("\nTotal: {} €".format(totale))
-    print("Total Seats: {}".format(tot_seats))
