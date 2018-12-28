@@ -46,6 +46,7 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
         key, u = pq.remove_min()                                        # prendo l'aeroporto in cui arrivo con meno tempo
         cloud[u] = key                                                  # aggiungo la distanza per u alla mappa delle distanze
         del pqlocator[u]                                                # rimuovo il locator per u
+
         if u == end:                                                    # se u è l'aeroporto di destinazione restituisco la soluzione
             path.add_first(flights_used[u])                             # il volo utilizzato per arrivare in u è aggiunto al path
             dep = s(flights_used[u])                                    # setto l'aeroporto corrente all'aeroporto di partenza
@@ -53,6 +54,7 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
                 path.add_first(flights_used[dep])                       # aggiungo il volo utilizzato per arrivare all'aeroporto corrente
                 dep = s(flights_used[dep])                              # aggiorno l'aeroporto corrente
             return cloud[u], path                                       # ritorno la rotta e la sua durata
+
         for e in incident_flights[u]:                                   # per ogni volo in partenza da u
             if l(e) - t[u] >= c(u) or (u == start and l(e) >= t[u]):    # se il volo può essere considerato
                 v = d(e)                                                # assegno a v l'aeroporto di arrivo
