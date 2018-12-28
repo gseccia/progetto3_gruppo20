@@ -2,6 +2,32 @@ from typing import Optional, Dict
 from airports_time_schedule.ATS import *
 
 
+# Nel caso in cui venga inserito l' elemento nella soluzione,
+# il costo della soluzione ottima è il costo dell'ultimo elemento più il costo ottimo del sottoproblema
+# dove considero tutti gli altri tranne l'ultimo e la soluzione in cui devo togliere il budget di n.
+
+# Sia v vettore dei volumi ,c vettore dei costi
+# Devo decidere se mettere o no l'ultimo elemento
+
+# M[n][B] = c_n + M[n-1][n-v_n] (se v_n <= B)
+# Se l'ultimo elemento non viene inserito ho n-1 oggetti e il budget è B ,
+# in questo caso il costo della soluzione ottima è:
+# M[n][B] = M[n-1][B]
+
+# Dato che voglio massimizzare il costo scelgo il max tra le due
+
+# sia v_n capacità dell'ultimo elemento
+# M[n][B] = M[n-1][B] if v_n > B
+# M[n][B] = max(M[n-1][B],c_n +M[n-1][B-v_n])
+# Dobbiamo guardare la riga precedente nella matrice (B- v_n)
+# Ogni volta abbiamo bisogno anche di M[1][B-v_n], ma  non è noto il valore di v_n
+
+# soluzioni al contorno:
+# per k = 0,...,B
+# M[1][k] = 0 se v_1 > k
+# M[1][k] = c_1 altrimenti
+# Mi calcolo M[1][k] perché ho bisogno per tutta la riga perché non so quanto vale v_n
+
 def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Flight], Dict]]:
     flights_cost = list()
     num_posti = list()
@@ -43,23 +69,6 @@ def find_sol(flights, flights_cost, budget, matrix_C):
         n -= 1
     return sol
 
-# I caso inserisco elemento nella soluzione: il costo della soluzione ottima è il costo dell'ultimo elemento più il costo ottimo del sottoproblema dove considero tutti gli altri tranne l'ultimo e la soluzione in cui devo togliere il budget di n
-# Sia v vettore dei volumi ,c vettore dei costi
-# Devo decidere se mettere o no l'ultimo elemento
-# M[n][B] = c_n + M[n-1][n-v_n] (se v_n <= B)
-# Se l'ultimo elemento non glielo inserisco: ho n-1 oggetti e il budget è B , in questo caso il costo della soluzione ottima è questo:
-# M[n][B] = M[n-1][B]
-# Dato che voglio massimizzare il costo scelgo il max tra le due
-# v_n capacità dell'ultimo elemento
-# M[n][B] = M[n-1][B] if v_n > B
-# M[n][B] = max(M[n-1][B],c_n +M[n-1][B-v_n])#Dobbiamo andare a guardare la riga precedente nella matrice (B- v_n)
-# Ogni volta abbiamo bisogno anche di M[1][B-v_n], ma v_n non sappiamo quanto vale
-# soluzioni al contorno:
-# per k = 0,...,B
-# M[1][k] = 0 se v_1 > k
-# M[1][k] = c_1 otherwise
-# Mi calcolo M[1][k] perché ho bisogno per tutta la riga perché non so quanto vale v_n
-
 
 def max_posti(flights, flights_cost, num_posti, budget):
     n = len(flights)
@@ -73,8 +82,7 @@ def max_posti(flights, flights_cost, num_posti, budget):
 
     for i in range(1, n):
         for k in range(1, budget + 1):
-            if flights_cost[i] <= k and (
-                    M[i - 1][k - flights_cost[i]] + num_posti[i] >= M[i - 1][k]):  # and c[i] + C[i-1][k-c[i]]<P):
+            if flights_cost[i] <= k and (M[i - 1][k - flights_cost[i]] + num_posti[i] >= M[i - 1][k]):  # and c[i] + C[i-1][k-c[i]]<P):
                 M[i][k] = M[i - 1][k - flights_cost[i]] + num_posti[i]
                 C[i][k] = True
             else:
