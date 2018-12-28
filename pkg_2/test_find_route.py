@@ -4,6 +4,9 @@ from airports_time_schedule.ATS import *
 airports, flights = read_time_schedule_from_files("../airports_time_schedule/airports.csv",
                                                   "../airports_time_schedule/flights.csv")
 
+print("---------------------------------------- TEST_FIND_ROUTES ----------------------------------------")
+
+
 print("\n---------- Airports ----------")
 for airport in airports:
     print_airport(airport)
@@ -25,9 +28,9 @@ print("\n")
 
 tmp = find_route(flights, dep_air, dest_air, datetime.strptime("09:00", "%H:%M"))
 if tmp is not None:
-    print("distance {0}".format(tmp[0]))
+    print("Tempo impiegato per andare da {} a {} è: {}".format(dep_air.get_name(), dest_air.get_name(), tmp[0]))
     for elem in tmp[1]:
-        print(elem)
+        print_flight(elem)
 else:
-    print("FUCK OFF")
+    print("Non ci sono soluzioni.")
 
