@@ -31,5 +31,6 @@ if r is not None:
         for flight in path:
             print_flight(flight)
         print("\n")
+        count += 1
 else:
     print("No Path from {} to {}".format(dep_air.get_name(), dest_air.get_name()))
