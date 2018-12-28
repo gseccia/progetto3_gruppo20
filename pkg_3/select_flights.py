@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from airports_time_schedule.ATS import *
 
 """
@@ -26,8 +26,9 @@ def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Fl
     flights_cost = list()
     num_posti = list()
 
-    # Ordinamento richiede O(nlogn). Reverse richiede O(n) => O(nlogn)
+    # Ordinamento richiede O(nlogn)
     #L'ordinamento dei voli rende possibile, oltre a minimizzare il numero dei posti, anche a ridurre il budget totale da spendere
+
     flights.sort(reverse=True)
 
     # Inserimento nelle due code O(n)
@@ -74,7 +75,6 @@ def find_sol(flights, flights_cost, budget, matrix_C):
     return sol
 
 
-
 def max_posti(flights, flights_cost, num_posti, budget):
     """
     :param flights:
@@ -98,12 +98,14 @@ def max_posti(flights, flights_cost, num_posti, budget):
 
     for i in range(1, n):
         for k in range(1, budget + 1):
+
             #Devo decidere se prendere l'i-esimo elemento
             # I caso-> inserisco elemento nella soluzione:
             #La soluzione ottima si ottiene prendendo l'elemento, in quanto se non prendessi l'elemento
             #la soluzione ottenuta sarebbe minore rispetto a quella che si ottiene se invece prendessi l'elemento
             # il costo della soluzione ottima è il costo dell'ultimo elemento più il costo ottimo del sottoproblema dove considero tutti gli altri tranne l'ultimo e la soluzione in cui devo togliere il budget di n
             if flights_cost[i] <= k and (M[i - 1][k - flights_cost[i]] + num_posti[i] >= M[i - 1][k]):
+
                 M[i][k] = M[i - 1][k - flights_cost[i]] + num_posti[i]
                 C[i][k] = True
             else:
