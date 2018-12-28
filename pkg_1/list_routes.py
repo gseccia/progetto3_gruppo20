@@ -2,8 +2,7 @@ from typing import Optional, Dict
 from airports_time_schedule.ATS import *
 
 
-def list_routes(flights: List[Flight], start: Airport, b: Airport, t: datetime, T: timedelta) -> Optional[
-    List[List[Flight]]]:
+def list_routes(flights: List[Flight], start: Airport, b: Airport, t: datetime, T: timedelta) -> Optional[List[List[Flight]]]:
     """
     La funzione	list_routes() prende in	input l’orario	della	compagnia,
     gli	areoporti	a e	b,	 un	orario	 di	 partenza	t ed	 un	intervallo di	 tempo	T e	 restituisce	
@@ -17,9 +16,9 @@ def list_routes(flights: List[Flight], start: Airport, b: Airport, t: datetime, 
     :param T: durata massima della rotta
     :return: rotte possibili o None se non presenti
     """
-    current_path_duration = timedelta(0, 0)  # Inizializziamo la durata della possibile soluzione corrente a 0
-    current_path = []  # Inizializziamo la possibile soluzione corrente
-    paths = []  # Inizializziamo il container di tuttle le possibili soluzioni
+    current_path_duration = timedelta(0, 0)       # Inizializziamo la durata della possibile soluzione corrente a 0
+    current_path = []                             # Inizializziamo la possibile soluzione corrente
+    paths = []                                    # Inizializziamo il container di tuttle le possibili soluzioni
 
     # Creaiamo la matrice di incidenza dei voli in partenza da ogni aeroporto
     available_flight_per_airport = dict()
@@ -53,18 +52,16 @@ def find_possible_routes(flights: Dict, start: Airport, b: Airport, arrival_time
     :return: None
     """
 
-    # Caso Base: rotta valida
-    if start == b:
-        paths.append(current_path.copy())  # aggiungo la rotta corrente a paths
+    if start == b:                          # Caso Base: rotta valida
+        paths.append(current_path.copy())   # aggiungo la rotta corrente a paths
     else:
-        for flight in flights[start]:  # per ogni volo in partenza da start
-            relative_cost = calc_weight(flight, arrival_time)  # calcolo il costo del volo corrente come tempo
-            cost = current_path_duration + relative_cost  # calcolo il costo della rotta data l'aggiunta del volo
-            if cost < T and arrival_time + c(start) <= l(
-                    flight):  # verifico che il volo corrente permette l'esplorazione di nuove rotte
-                new_path = current_path + [flight]  # creo una nuova possibile rotta
-                find_possible_routes(flights, d(flight), b, a(flight), T, cost, new_path,
-                                     paths)  # cerco le soluzioni a partire dalla nuova rotta
+        for flight in flights[start]:                               # per ogni volo in partenza da start
+            relative_cost = calc_weight(flight, arrival_time)       # calcolo il costo del volo corrente come tempo
+            cost = current_path_duration + relative_cost            # calcolo il costo della rotta data l'aggiunta del volo
+            if cost < T and arrival_time + c(start) <= l(flight):   # verifico che il volo corrente permette l'esplorazione di nuove rotte
+                new_path = current_path + [flight]                  # creo una nuova possibile rotta
+                # cerco le soluzioni a partire dalla nuova rotta
+                find_possible_routes(flights, d(flight), b, a(flight), T, cost, new_path,paths)
 
 
 def calc_weight(e: Flight, t: datetime) -> timedelta:
@@ -73,6 +70,6 @@ def calc_weight(e: Flight, t: datetime) -> timedelta:
     :param t: orario di partenza
     :return: peso del volo in termini di durata della scelta
     """
-    duration = a(e) - l(e)  # durata del volo
-    waiting_for_flight = l(e) - (t + c(s(e)))  # tempo di attesa
+    duration = a(e) - l(e)                          # durata del volo
+    waiting_for_flight = l(e) - (t + c(s(e)))       # tempo di attesa
     return duration + waiting_for_flight + c(s(e))  # durata + tempo di attesa + tempo di coincidenza

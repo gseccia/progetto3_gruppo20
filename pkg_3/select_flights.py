@@ -1,26 +1,12 @@
-from typing import Optional
+from typing import Optional, Dict
 from airports_time_schedule.ATS import *
 
-"""
-    Un	 volo	 consuma	 60kg	 di	 gasolio	 per	 ogni	 ora	 di	 volo	 e	 prima	 del	 decollo	 la	
-    compagnia	 deve	 acquistare	 dal	 gesture dell’areoporto	 il	 gasolio	 necessario	 per	 il	
-    volo.	Si	assuma che	ogni	kg	di	gasolio	costa	1€ e	che	la compagnia	ha	a	disposizione	
-    un	 budget	 complessivo	 uguale	 a	 B	 per	 pagare	 il	 gasolio	 e	 che	 questo	 budget non	
-    consente	 di	 coprire	 tutti	 i voli	 previsti	 nell’orario.	 Gli	 amministratori	 della	
-    compagnia	devono	decidere	quali	voli	 far	partire	e	quali	cancellare.	Progettare	una	
-    funzione	select_flights() che,	preso	in	input	l’orario	della	compagnia	ed	il	budget	B,	
-    seleziona	quali	voli	far	decollare	in	modo	da	massimizzare	il	numero	complessivo	di	
-    posti	 disponibili. Inoltre,	 la	 funzione	 deve	 restituire	 per	 ogni	 areoporto	 a quanti	
-    soldi	 devono	 essere	 assegnati	 al	 responsabile	 dello	 scalo	 per	 pagare	 il	 gasolio	
-    necessario	per	tutti	i voli	in	partenza	da	a.
-"""
 
-
-def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Flight], List[Tuple[Airport, int]]]]:
+def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Flight], Dict]]:
     flights_cost = list()
     num_posti = list()
 
-    # Ordinamento richiede O(nlogn). Reverse richiede O(n) => O(nlogn)
+    # Ordinamento richiede O(nlogn)
     flights.sort(reverse=True)
 
     # Inserimento nelle due code O(n)
@@ -57,22 +43,22 @@ def find_sol(flights, flights_cost, budget, matrix_C):
         n -= 1
     return sol
 
-#I caso inserisco elemento nella soluzione: il costo della soluzione ottima è il costo dell'ultimo elemento più il costo ottimo del sottoproblema dove considero tutti gli altri tranne l'ultimo e la soluzione in cui devo togliere il budget di n
-#Sia v vettore dei volumi ,c vettore dei costi
-#Devo decidere se mettere o no l'ultimo elemento
-#M[n][B] = c_n + M[n-1][n-v_n] (se v_n <= B)
-#Se l'ultimo elemento non glielo inserisco: ho n-1 oggetti e il budget è B , in questo caso il costo della soluzione ottima è questo:
-#M[n][B] = M[n-1][B]
-#Dato che voglio massimizzare il costo scelgo il max tra le due
-#v_n capacità dell'ultimo elemento
-#M[n][B] = M[n-1][B] if v_n > B
-#M[n][B] = max(M[n-1][B],c_n +M[n-1][B-v_n])#Dobbiamo andare a guardare la riga precedente nella matrice (B- v_n)
-#Ogni volta abbiamo bisogno anche di M[1][B-v_n], ma v_n non sappiamo quanto vale
-#soluzioni al contorno:
-#per k = 0,...,B
-#M[1][k] = 0 se v_1 > k
-#M[1][k] = c_1 otherwise
-#Mi calcolo M[1][k] perché ho bisogno per tutta la riga perché non so quanto vale v_n
+# I caso inserisco elemento nella soluzione: il costo della soluzione ottima è il costo dell'ultimo elemento più il costo ottimo del sottoproblema dove considero tutti gli altri tranne l'ultimo e la soluzione in cui devo togliere il budget di n
+# Sia v vettore dei volumi ,c vettore dei costi
+# Devo decidere se mettere o no l'ultimo elemento
+# M[n][B] = c_n + M[n-1][n-v_n] (se v_n <= B)
+# Se l'ultimo elemento non glielo inserisco: ho n-1 oggetti e il budget è B , in questo caso il costo della soluzione ottima è questo:
+# M[n][B] = M[n-1][B]
+# Dato che voglio massimizzare il costo scelgo il max tra le due
+# v_n capacità dell'ultimo elemento
+# M[n][B] = M[n-1][B] if v_n > B
+# M[n][B] = max(M[n-1][B],c_n +M[n-1][B-v_n])#Dobbiamo andare a guardare la riga precedente nella matrice (B- v_n)
+# Ogni volta abbiamo bisogno anche di M[1][B-v_n], ma v_n non sappiamo quanto vale
+# soluzioni al contorno:
+# per k = 0,...,B
+# M[1][k] = 0 se v_1 > k
+# M[1][k] = c_1 otherwise
+# Mi calcolo M[1][k] perché ho bisogno per tutta la riga perché non so quanto vale v_n
 
 
 def max_posti(flights, flights_cost, num_posti, budget):
