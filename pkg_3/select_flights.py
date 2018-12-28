@@ -28,17 +28,17 @@ def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Fl
 
     # Ordinamento richiede O(nlogn)
     # L'ordinamento dei voli rende possibile, oltre a minimizzare il numero dei posti, anche a ridurre il budget totale da spendere
-    flights = sorted(flights, reverse=True, key=lambda flight: (l(flight)-a(flight)))
+    flights_sorted = sorted(flights, reverse=True, key=lambda flight: (l(flight)-a(flight)))
     # flights.sort(reverse=True)
 
     # Inserimento nelle due code O(n)
-    for flight in flights:
+    for flight in flights_sorted:
         num_posti.append(p(flight))
         hours = a(flight) - l(flight)
         flights_cost.append(int(hours.total_seconds() / 60))
 
     # la funzione max_posti richiede O(n*B) (B=budget)
-    list_of_flights = max_posti(flights, flights_cost, num_posti, budget)
+    list_of_flights = max_posti(flights_sorted, flights_cost, num_posti, budget)
 
     airport_map = {}
 
