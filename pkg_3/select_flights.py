@@ -51,7 +51,7 @@ def find_sol(flights, flights_cost, budget, matrix_C):
     n = len(flights)
     sol = list()
     while n - 1 >= 0:
-        if matrix_C[n - 1][budget] == True:
+        if matrix_C[n - 1][budget]:
             sol.append(flights[n - 1])
             budget = budget - flights_cost[n - 1]
         n -= 1
@@ -79,24 +79,24 @@ def max_posti(flights, flights_cost, num_posti, budget):
     return find_sol(flights, flights_cost, budget, C)
 
 
-def print_select_flight(list, map, budget):
+def print_select_flight(flights, airports, budget):
     totale = 0
     tot_seats = 0
-    print("Con un budget di {} €  è possibile massimizzare i ricavi con i seguenti voli:".format(budget))
-    for i in list:
-        dep = i.get_departure_airport().get_name()
-        dest = i.get_destination_airport().get_name()
-        elapsed_time = i.get_arrival_time() - i.get_start_time()
-        seats = i.get_seats()
+    print("With a budget of {} €, you can maximize revenue with the following flights:".format(budget))
+    for flight in flights:
+        dep = flight.get_departure_airport().get_name()
+        dest = flight.get_destination_airport().get_name()
+        elapsed_time = flight.get_arrival_time() - flight.get_start_time()
+        seats = flight.get_seats()
         tot_seats += seats
-        print("- volo da {} a {} di durata {} minuti che trasporta {} passeggeri".format(dep, dest, int(
+        print("- flight from {} to {} - flight duration {} min - passenger {}".format(dep, dest, int(
             elapsed_time.total_seconds() / 60), seats))
 
-    print("\nIl budget deve essere così suddiviso:")
-    for i in map:
-        costo = int(map.get(i).total_seconds() / 60)
+    print("\nBudget must be divided as follows:")
+    for airport in airports:
+        costo = int(airports.get(airport).total_seconds() / 60)
         totale += costo
-        print("- aeroporto {}: {} €".format(i.get_name(), costo))
+        print("- airport {}: {} €".format(airport.get_name(), costo))
 
-    print("\nCosto totale: {} €".format(totale))
-    print("Posti totali: {}".format(tot_seats))
+    print("\nTotal: {} €".format(totale))
+    print("Total Seats: {}".format(tot_seats))

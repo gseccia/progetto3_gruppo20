@@ -143,6 +143,17 @@ def p(f: Flight) -> int:
     """
     return f.get_seats()
 
+def print_airport(airport: Airport):
+    print("Airport {} - Coincidence: {}".format(airport.get_name(), c(airport)))
+
+def print_flight(flight: Flight):
+    print("Flight {} -> {} - Departure: {} - Arrival: {} - Seats {} ".format(
+        flight.get_departure_airport().get_name(),
+        flight.get_destination_airport().get_name(),
+        flight.get_start_time().time().strftime('%H:%M'),
+        flight.get_arrival_time().time().strftime('%H:%M'),
+        flight.get_seats()))
+
 
 def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[
     List[Airport], List[Flight]]:

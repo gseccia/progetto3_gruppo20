@@ -43,8 +43,7 @@ def find_possible_routes(flights: Dict, start: Airport, b: Airport, arrival_time
             if cost < T and arrival_time+c(start) <= l(flight):
                 new_path_duration = current_path_duration + relative_cost
                 new_path = current_path + [flight]
-                find_possible_routes(flights, d(flight), b, a(flight), T,new_path_duration, new_path, paths)
-
+                find_possible_routes(flights, d(flight), b, a(flight), T, new_path_duration, new_path, paths)
 
 def calc_weight(e: Flight, u: Airport, t: datetime) -> timedelta:
     duration = a(e) - l(e)

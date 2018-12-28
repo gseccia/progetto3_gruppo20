@@ -13,6 +13,7 @@ def get_random_pair_airports():
     tmp = random.sample(range(len(airports)), 2)
     list = []
     list.append(Airport(airports[tmp[0]], 10))
+    print_flight(airports[tmp[0]])
     list.append(Airport(airports[tmp[1]], 10))
     return list
 
@@ -26,12 +27,7 @@ def get_random_flight():
     arr_time = get_random_hour(dep_time)
     seats = random.randint(50, 500)
     flight = Flight(dep, dest, dep_time, arr_time, seats)
-    print("Volo {} -> {} - Partenza: {} - Arrivo: {} - Posti {} ".format(
-        flight.get_departure_airport().get_name(),
-        flight.get_destination_airport().get_name(),
-        flight.get_start_time().time().strftime('%H:%M'),
-        flight.get_arrival_time().time().strftime('%H:%M'),
-        flight.get_seats()))
+    print_flight(flight)
     return flight
 
 

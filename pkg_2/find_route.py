@@ -14,7 +14,8 @@ from TdP_collections.priority_queue.adaptable_heap_priority_queue import Adaptab
 """
 
 
-def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: datetime) -> Optional[Tuple[timedelta, PositionalList]]:  ## SPECIFICARE MEGLIO
+def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: datetime) -> Optional[
+    Tuple[timedelta, PositionalList]]:  ## SPECIFICARE MEGLIO
     dist = {}  # Per ogni aereoporto, memorizzo il tempo per arrivarci
     cloud = {}  # map reachable v to its d[v] value
     pq = AdaptableHeapPriorityQueue()  # vertex v will have key d[v]
@@ -57,19 +58,20 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
                 dep = s(flights_used[dep])
                 print("DEP 2 ", dep)
             return cloud[u], path
+        print("HELLO {}".format(t))
         for e in incident_flights[u]:  # outgoing edges (u,v)
-            v = d(e)
-            if v not in dist:
-                dist[v] = timedelta.max
-                pqlocator[v] = pq.add(dist[v], v)
             if l(e) - t[u] >= c(u) or (u == start and l(e) >= t[u]):  # PRIMO CASO
+                v = d(e)
+                if v not in dist:
+                    dist[v] = timedelta.max
+                    pqlocator[v] = pq.add(dist[v], v)
                 if v not in cloud:
                     # perform relaxation step on edge (u,v)
                     wgt = calc_weight(e, u, t)  # COST FUNCTION
                     if dist[u] + wgt < dist[v]:  # better path to v?
                         dist[v] = dist[u] + wgt  # update the distance
                         pq.update(pqlocator[v], dist[v], v)  # update the pq entry
-                        t[v] = t[u] + wgt
+                        t[v] = a(e)
                         print("v ", v)
                         print("t[v] ", t[v])
                         print("dist[v] ", dist[v])
