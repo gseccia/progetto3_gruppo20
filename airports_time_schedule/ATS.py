@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import csv
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 
 class Airport:
