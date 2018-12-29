@@ -37,10 +37,11 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
     # Creaiamo la matrice di incidenza dei voli in partenza da ogni aeroporto
     incident_flights = {}
     for flight in flights:
-        if s(flight) not in incident_flights:
-            incident_flights[s(flight)] = [flight]
-        else:
-            incident_flights[s(flight)].append(flight)
+        if l(flight) >= t_start:
+            if s(flight) not in incident_flights:
+                incident_flights[s(flight)] = [flight]
+            else:
+                incident_flights[s(flight)].append(flight)
 
     dist[start] = timedelta(hours=0, minutes=0)                         # Inizialmemnte la distanza rispetto a start è 0
     pqlocator[start] = pq.add(dist[start], start)                       # memorizziamo la posizione di start all'interno della coda
