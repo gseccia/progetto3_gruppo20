@@ -29,6 +29,10 @@ def list_routes(flights: List[Flight], start: Airport, b: Airport, t: datetime, 
             else:
                 available_flight_per_airport[s(flight)] = [flight]
 
+    # caso particolare
+    if start == b:
+        paths.append([])
+
     # Chiamata alla funzione ricorsiva per la ricerca delle possibili soluzioni
     find_possible_routes(available_flight_per_airport, start, b, t, T, current_path_duration, current_path, paths)
 
@@ -52,16 +56,17 @@ def find_possible_routes(flights: Dict, start: Airport, b: Airport, arrival_time
     :return: None
     """
 
-    if start == b:                          # Caso Base: rotta valida
-        paths.append(current_path.copy())   # aggiungo la rotta corrente a paths
+    if start == b and len(current_path) > 0:                        # Caso Base: rotta valida
+        paths.append(current_path.copy())                           # aggiungo la rotta corrente a paths
     else:
-        for flight in flights[start]:                               # per ogni volo in partenza da start
-            relative_cost = calc_weight(flight, arrival_time)       # calcolo il costo del volo corrente come tempo
-            cost = current_path_duration + relative_cost            # calcolo il costo della rotta data l'aggiunta del volo
-            if cost < T and arrival_time + c(start) <= l(flight):   # verifico che il volo corrente permette l'esplorazione di nuove rotte
-                new_path = current_path + [flight]                  # creo una nuova possibile rotta
-                # cerco le soluzioni a partire dalla nuova rotta
-                find_possible_routes(flights, d(flight), b, a(flight), T, cost, new_path,paths)
+        if flights.get(start) is not None:
+            for flight in flights[start]:                               # per ogni volo in partenza da start
+                relative_cost = calc_weight(flight, arrival_time)       # calcolo il costo del volo corrente come tempo
+                cost = current_path_duration + relative_cost            # calcolo il costo della rotta data l'aggiunta del volo
+                if cost < T and arrival_time + c(start) <= l(flight):   # verifico che il volo corrente permette l'esplorazione di nuove rotte
+                    new_path = current_path + [flight]                  # creo una nuova possibile rotta
+                    # cerco le soluzioni a partire dalla nuova rotta
+                    find_possible_routes(flights, d(flight), b, a(flight), T, cost, new_path,paths)
 
 
 def calc_weight(e: Flight, t: datetime) -> timedelta:

@@ -42,14 +42,13 @@ def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Fl
 
     airport_map = {}
 
-    # riempimento lista in O(n)
     for i in list_of_flights:
-        dep_airport = i.get_departure_airport()
-        elapsed_time = i.get_arrival_time() - i.get_start_time()
+        dep_airport = s(i)
+        cost_flight = int((a(i) - l(i)).total_seconds() / 60)
         if dep_airport not in airport_map:
-            airport_map[dep_airport] = elapsed_time
+            airport_map[dep_airport] = cost_flight
         else:
-            airport_map[dep_airport] += elapsed_time
+            airport_map[dep_airport] += cost_flight
 
     return list_of_flights, airport_map
 
@@ -89,7 +88,7 @@ def max_posti(flights, flights_cost, num_posti, budget):
     M = [[0 for k in range(budget + 1)] for i in range(n)]
     #La matrice C sarà una matrice 0/1 la cui cella i,j sarà 1 se l'elemento i è stato preso quanod il budget massimo è j, altrimenti 0
     C = [[False for k in range(budget + 1)] for i in range(n)]
-#Si riempie la prima riga della matrice poiché per ogni riga mi serve la riga precedente per ottenere la soluzione ottima
+    #Si riempie la prima riga della matrice poiché per ogni riga mi serve la riga precedente per ottenere la soluzione ottima
     for k in range(budget + 1):
         if k > 0 and flights_cost[0] <= k:
             M[0][k] = num_posti[0]

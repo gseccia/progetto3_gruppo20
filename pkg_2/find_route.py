@@ -18,6 +18,10 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
     :return: rotta	che	permette di	arrivare da	a a	b nel minor	tempo possibile o None se non trovato
     """
 
+    # caso particolare
+    if start == end:
+        return timedelta(0, 0), PositionalList()
+
     dist = {}                           # Per ogni aereoporto, memorizzo il tempo per arrivarci
     cloud = {}                          # mappa contente la minor distanza per ogni aeroporto
     pq = AdaptableHeapPriorityQueue()   # ogni aeroporto viene memorizzato in una coda con priorità pari alla sua distanza
@@ -54,20 +58,20 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
                 path.add_first(flights_used[dep])                       # aggiungo il volo utilizzato per arrivare all'aeroporto corrente
                 dep = s(flights_used[dep])                              # aggiorno l'aeroporto corrente
             return cloud[u], path                                       # ritorno la rotta e la sua durata
-
-        for e in incident_flights[u]:                                   # per ogni volo in partenza da u
-            if l(e) - t[u] >= c(u) or (u == start and l(e) >= t[u]):    # se il volo può essere considerato
-                v = d(e)                                                # assegno a v l'aeroporto di arrivo
-                if v not in dist:                                       # se non ho mai incontrato l'aeroporto
-                    dist[v] = timedelta.max                             # pongo la distanza da start al massimo
-                    pqlocator[v] = pq.add(dist[v], v)                   # aggiungo v agli aeroporti da considerare e ne memorizzo la posizione nella coda
-                if v not in cloud:                                      # se non ho ancora aggiunto v alla soluzione
-                    wgt = calc_weight(e, t)                             # calcolo il costo del volo corrente come tempo
-                    if dist[u] + wgt < dist[v]:                         # il path che ho trovato è migliore di quello precedente?
-                        dist[v] = dist[u] + wgt                         # aggiorno la distanza per arrivare all'aeroporto v
-                        pq.update(pqlocator[v], dist[v], v)             # aggiorno il valore della distanza anche nella coda
-                        t[v] = a(e)                                     # aggiorno il tempo di arrivo all'aeroporto v
-                        flights_used[v] = e                             # segno il volo e come utilizzato per arrivare a v
+        if incident_flights.get(u) is not None:
+            for e in incident_flights[u]:                                   # per ogni volo in partenza da u
+                if l(e) - t[u] >= c(u) or (u == start and l(e) >= t[u]):    # se il volo può essere considerato
+                    v = d(e)                                                # assegno a v l'aeroporto di arrivo
+                    if v not in dist:                                       # se non ho mai incontrato l'aeroporto
+                        dist[v] = timedelta.max                             # pongo la distanza da start al massimo
+                        pqlocator[v] = pq.add(dist[v], v)                   # aggiungo v agli aeroporti da considerare e ne memorizzo la posizione nella coda
+                    if v not in cloud:                                      # se non ho ancora aggiunto v alla soluzione
+                        wgt = calc_weight(e, t)                             # calcolo il costo del volo corrente come tempo
+                        if dist[u] + wgt < dist[v]:                         # il path che ho trovato è migliore di quello precedente?
+                            dist[v] = dist[u] + wgt                         # aggiorno la distanza per arrivare all'aeroporto v
+                            pq.update(pqlocator[v], dist[v], v)             # aggiorno il valore della distanza anche nella coda
+                            t[v] = a(e)                                     # aggiorno il tempo di arrivo all'aeroporto v
+                            flights_used[v] = e                             # segno il volo e come utilizzato per arrivare a v
     return None
 
 
