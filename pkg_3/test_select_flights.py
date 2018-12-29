@@ -43,11 +43,11 @@ airports, flights = read_time_schedule_from_files("../airports_time_schedule/air
 
 print("\n---------- Airports ----------")
 for airport in airports:
-    print_airport(airport)
+    print(airport)
 
 print("\n---------- Flights ----------")
 for flight in flights:
-    print_flight(flight)
+    print(flight)
 
 print("\n******* CASO 1 *******")
 print("Budget sufficiente per più voli")

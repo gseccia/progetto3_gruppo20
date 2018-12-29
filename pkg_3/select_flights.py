@@ -1,20 +1,6 @@
 from typing import Optional, Dict
 from airports_time_schedule.ATS import *
 
-"""
-    Un	 volo	 consuma	 60kg	 di	 gasolio	 per	 ogni	 ora	 di	 volo	 e	 prima	 del	 decollo	 la	
-    compagnia	 deve	 acquistare	 dal	 gesture dell’areoporto	 il	 gasolio	 necessario	 per	 il	
-    volo.	Si	assuma che	ogni	kg	di	gasolio	costa	1€ e	che	la compagnia	ha	a	disposizione	
-    un	 budget	 complessivo	 uguale	 a	 B	 per	 pagare	 il	 gasolio	 e	 che	 questo	 budget non	
-    consente	 di	 coprire	 tutti	 i voli	 previsti	 nell’orario.	 Gli	 amministratori	 della	
-    compagnia	devono	decidere	quali	voli	 far	partire	e	quali	cancellare.	Progettare	una	
-    funzione	select_flights() che,	preso	in	input	l’orario	della	compagnia	ed	il	budget	B,	
-    seleziona	quali	voli	far	decollare	in	modo	da	massimizzare	il	numero	complessivo	di	
-    posti	 disponibili. Inoltre,	 la	 funzione	 deve	 restituire	 per	 ogni	 areoporto	 a quanti	
-    soldi	 devono	 essere	 assegnati	 al	 responsabile	 dello	 scalo	 per	 pagare	 il	 gasolio	
-    necessario	per	tutti	i voli	in	partenza	da	a.
-"""
-
 
 def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Flight], Dict]]:
     """
@@ -29,7 +15,6 @@ def select_flights(flights: List[Flight], budget: int) -> Optional[Tuple[List[Fl
     # Ordinamento richiede O(nlogn)
     # L'ordinamento dei voli rende possibile, oltre a minimizzare il numero dei posti, anche a ridurre il budget totale da spendere
     flights_sorted = sorted(flights, reverse=True, key=lambda flight: (l(flight)-a(flight)))
-    # flights.sort(reverse=True)
 
     # Inserimento nelle due code O(n)
     for flight in flights_sorted:
@@ -109,7 +94,8 @@ def max_posti(flights, flights_cost, num_posti, budget):
                 C[i][k] = True
             else:
                 M[i][k] = M[i - 1][k] # II caso -> non inserisco elemento nella soluzione:
-                #La soluzione ottima è contenuta nella matrice C
+
+    #La soluzione ottima è contenuta nella matrice C
     return find_sol(flights, flights_cost, budget, C)
 
 

@@ -30,7 +30,7 @@ class Airport:
         return False
 
     def __str__(self):
-        return "[name: " + self.__name + ", time_needed: " + str(self.__c) + "]"
+        return "Airport {} - Coincidence: {}".format(self.get_name(), self.get_minimum_time_coincidence())
 
     def __repr__(self):
         return self.__str__()
@@ -77,18 +77,15 @@ class Flight:
         return False
 
     def __str__(self):
-        tmp = {"departure": self.__departure_airport, "destination": self.__destination_airport,
-               "start": self.__start_time.strftime("%H:%M"), "arrive": self.__arrival_time.strftime("%H:%M"),
-               "seats": self.__seats}
-        return str(tmp)
+        return "Flight {} -> {} - Departure: {} - Arrival: {} - Seats {} ".format(
+            self.get_departure_airport().get_name(),
+            self.get_destination_airport().get_name(),
+            self.get_start_time().time().strftime('%H:%M'),
+            self.get_arrival_time().time().strftime('%H:%M'),
+            self.get_seats())
 
     def __repr__(self):
         return self.__str__()
-
-    def __gt__(self, other):
-        et = self.get_arrival_time() - self.get_start_time()
-        et_other = other.get_arrival_time() - other.get_start_time()
-        return et > et_other
 
     def __hash__(self):
         return hash(
@@ -142,17 +139,6 @@ def p(f: Flight) -> int:
     :return:  seats
     """
     return f.get_seats()
-
-def print_airport(airport: Airport):
-    print("Airport {} - Coincidence: {}".format(airport.get_name(), c(airport)))
-
-def print_flight(flight: Flight):
-    print("Flight {} -> {} - Departure: {} - Arrival: {} - Seats {} ".format(
-        flight.get_departure_airport().get_name(),
-        flight.get_destination_airport().get_name(),
-        flight.get_start_time().time().strftime('%H:%M'),
-        flight.get_arrival_time().time().strftime('%H:%M'),
-        flight.get_seats()))
 
 
 def read_time_schedule_from_files(path_to_airports: str = None, path_to_flights: str = None) -> Tuple[
