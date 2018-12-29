@@ -59,7 +59,7 @@ def find_possible_routes(flights: Dict, start: Airport, b: Airport, arrival_time
     if start == b and len(current_path) > 0:                        # Caso Base: rotta valida
         paths.append(current_path.copy())                           # aggiungo la rotta corrente a paths
     else:
-        if flights.get(start) is not None:
+        if start in flights:
             for flight in flights[start]:                               # per ogni volo in partenza da start
                 relative_cost = calc_weight(flight, arrival_time)       # calcolo il costo del volo corrente come tempo
                 cost = current_path_duration + relative_cost            # calcolo il costo della rotta data l'aggiunta del volo

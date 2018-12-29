@@ -58,7 +58,7 @@ def find_route(flights: List[Flight], start: Airport, end: Airport, t_start: dat
                 path.add_first(flights_used[dep])                       # aggiungo il volo utilizzato per arrivare all'aeroporto corrente
                 dep = s(flights_used[dep])                              # aggiorno l'aeroporto corrente
             return cloud[u], path                                       # ritorno la rotta e la sua durata
-        if incident_flights.get(u) is not None:
+        if u in incident_flights:
             for e in incident_flights[u]:                                   # per ogni volo in partenza da u
                 if l(e) - t[u] >= c(u) or (u == start and l(e) >= t[u]):    # se il volo può essere considerato
                     v = d(e)                                                # assegno a v l'aeroporto di arrivo
